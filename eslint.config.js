@@ -10,7 +10,7 @@ export default defineConfig([
     languageOptions: { globals: { ...globals.browser, ...globals.webextensions } },
   },
   {
-    files: ['scripts/**/*.mjs', 'test/**/*.js', 'eslint.config.js'],
+    files: ['scripts/**/*.mjs', 'test/**/*.js', 'test/**/*.mjs', 'eslint.config.js'],
     languageOptions: { globals: globals.node },
   },
 ]);

@@ -17,18 +17,23 @@ const root = fileURLToPath(new URL('..', import.meta.url));
 const targets = {
   chrome: {
     scripts: {
-      'content.js': 'src/content/main.js',
       'background.js': 'src/background/background.js',
       'offscreen.js': 'src/offscreen/offscreen.js',
     },
     files: { 'offscreen.html': 'src/offscreen/offscreen.html' },
   },
   firefox: {
-    scripts: { 'content.js': 'src/content/main.js' },
+    scripts: {},
     files: {},
   },
 };
+const sharedScripts = {
+  'content.js': 'src/content/main.js',
+  'popup.js': 'src/popup/popup.js',
+};
 const sharedFiles = {
+  'popup.html': 'src/popup/popup.html',
+  'popup.css': 'src/popup/popup.css',
   'ort-wasm-simd-threaded.wasm': 'node_modules/onnxruntime-web/dist/ort-wasm-simd-threaded.wasm',
   'silero_vad.onnx': 'assets/silero_vad.onnx',
 };
@@ -43,7 +48,7 @@ async function buildAll(outRoot, { clean }) {
     mkdirSync(dir, { recursive: true });
     await esbuild.build({
       absWorkingDir: root,
-      entryPoints: Object.entries(scripts).map(([out, src]) => ({ in: src, out: out.replace(/\.js$/, '') })),
+      entryPoints: Object.entries({ ...sharedScripts, ...scripts }).map(([out, src]) => ({ in: src, out: out.replace(/\.js$/, '') })),
       bundle: true,
       format: 'iife',
       target: 'es2022',

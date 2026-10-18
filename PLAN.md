@@ -48,12 +48,12 @@ Phase 0's measurements behind these choices are in [spikes/phase0/REPORT.md](spi
 ```
 src/
   content/      video.js, capture.js, speed.js, overlay.js, main.js
-  vad/          silero.js (model session and state), resample.js, remote.js (port client for the fallback)
+  vad/          silero.js (model and per-stream state), resample.js, load.js (loads it in an extension context), remote.js (port client for the fallback)
   background/   background.js (Chrome only: the service worker that opens the offscreen document)
   offscreen/    offscreen.html, offscreen.js (Chrome only: serves the model over a port)
   controller/   controller.js (pure decision logic)
   popup/        popup.html, popup.js, popup.css
-  shared/       settings.js (defaults, storage, migration)
+  shared/       settings.js (defaults, storage, migration), messages.js (popup to content script)
 assets/         icons, silero_vad.onnx (v6.2, 16 kHz export)
 manifest/       base.json, chrome.json, firefox.json
 scripts/        build.mjs (esbuild, copies wasm and model, writes dist/<browser>), manifest.mjs (merges the manifests)
@@ -90,7 +90,18 @@ Result: `npm run build` produces both extensions; they load in Chrome for Testin
 - `THIRD_PARTY_NOTICES.md`: Speech Speed (MIT, Yishan Wong), Silero VAD (MIT, Silero Team), ONNX Runtime (MIT, Microsoft).
 - `.gitignore`: `node_modules/`, `dist/`, `.idea/`.
 
-### Phase 2: Core
+### Phase 2: Core — done
+
+Result: Grindskip works end to end in Chrome for Testing 155 and Firefox 157, on YouTube (including moving to the next video in the same player) and on a local page with a strict CSP, where Chrome runs the model in the offscreen document. `npm test` covers the controller (rules, rewind safeguards, and a closed-loop replay on Phase 0's recorded traces), the settings, the resampler, Silero under Node, the speed control and the port client. Settled along the way:
+
+- Chrome's default policy for extension pages doesn't allow WebAssembly, so `manifest/chrome.json` adds `'wasm-unsafe-eval'` to `content_security_policy.extension_pages` for the offscreen document. (Phase 0's spike build had it; the content script doesn't need it.)
+- Grindskip is off after installing; the popup turns it on for every site. The overlay is off by default and has its own checkbox.
+- Muted videos are left alone (no model, no capture), which also skips YouTube's hover previews.
+- After a seek, a new video and at the start, the controller begins in the wait state, so the first words aren't rushed before the model has heard anything.
+- When the user changes the speed (the player's menu, another extension), Grindskip stops changing it on that video until the popup's *Change the speed again* or the next video. Speed changes in the 1.5 s after a new source loads are the player's own (YouTube restores its saved speed) and are overridden.
+- One Silero model serves several streams with their own state, its runs queued; the offscreen document keeps one model for all tabs and closes itself after 30 s without a tab.
+- Turning Grindskip off releases the model's session, but not ONNX Runtime's compiled WebAssembly, which ORT can't unload: that stays in the tab until it reloads.
+- The content script runs in the top frame only, so videos embedded through an iframe (a YouTube embed on another site) aren't handled yet.
 
 1. **`video.js`:** finds the largest video, re-attaches when YouTube swaps it, and tracks pause, seek and buffering. Ported from the old repo.
 2. **`capture.js` and `resample.js`:** capture with `captureStream()`, a resampler to 16 kHz that low-passes as it goes (any input rate; 48 kHz in practice), and 512-sample framing. Start from `spikes/phase0/lib/resample.js`.
@@ -153,4 +164,4 @@ If music or sound effects still trigger speech, fine-tune Silero on labelled gam
 - **Memory.** The model costs about 100 MB per tab while it's loaded, mostly ONNX Runtime's compiled code. Load it only while on; a reduced-operator ORT build is the lever if needed.
 - **Vocals in game music count as speech.** Fine-tuning can help.
 - **Running on every site.** The content script loads in every page, so it must stay idle (no model, no capture) until a video plays with Grindskip on. Any page can also tell that Grindskip is installed by fetching its web-accessible files; Chrome's `use_dynamic_url` could hide them, if ORT still finds the `.wasm` that way.
-- **Store review of bundled code.** Keep the bundle unminified and the build reproducible.
+- **Store review of bundled code.** Keep the bundle unminified and the build reproducible. `web-ext lint` warns about a dynamic `import()` in ONNX Runtime's code (`UNSAFE_VAR_ASSIGNMENT`); it loads ORT's WebAssembly glue, which the bundle already contains, so it never runs. Explain this in the AMO submission notes.
