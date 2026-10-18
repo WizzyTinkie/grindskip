@@ -1,0 +1,19 @@
+{
+  "manifest_version": 3,
+  "name": "Grindskip",
+  "description": "Plays gameplay videos fast while no one is talking and at normal speed while someone is. Speech is detected on your computer.",
+  "permissions": ["storage"],
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["content.js"],
+      "run_at": "document_idle"
+    }
+  ],
+  "web_accessible_resources": [
+    {
+      "resources": ["ort-wasm-simd-threaded.wasm", "silero_vad.onnx"],
+      "matches": ["<all_urls>"]
+    }
+  ]
+}
