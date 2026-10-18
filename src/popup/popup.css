@@ -121,8 +121,9 @@ input[type="range"] {
   accent-color: var(--accent);
 }
 
+.controls .hint { margin-top: -6px; }
 .hint {
-  margin: -6px 0 0;
+  margin: 0;
   font-size: 11px;
   color: var(--muted);
 }
@@ -157,3 +158,10 @@ button.quiet {
   margin-top: 14px;
   color: var(--muted);
 }
+
+.record {
+  display: grid;
+  gap: 4px;
+  margin-top: 14px;
+}
+.record[hidden] { display: none; }

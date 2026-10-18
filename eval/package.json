@@ -1,0 +1,12 @@
+{
+  "name": "grindskip-eval",
+  "private": true,
+  "type": "module",
+  "description": "Phase 3: records the test clips in the browsers and replays them offline to score and tune the controller",
+  "devDependencies": {
+    "puppeteer": "25.14.0"
+  },
+  "allowScripts": {
+    "puppeteer@25.14.0": true
+  }
+}

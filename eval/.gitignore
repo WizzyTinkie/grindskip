@@ -1,0 +1,8 @@
+# Local tools and inputs (see README.md)
+.venv/
+node_modules/
+media/
+# The evaluation build and the browser recordings (large)
+build/
+recordings/
+*.log

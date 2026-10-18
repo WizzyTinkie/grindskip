@@ -1,8 +1,10 @@
 // Builds the extension into dist/chrome and dist/firefox.
 //
-// Usage: node scripts/build.mjs [--watch] [--out dir]
+// Usage: node scripts/build.mjs [--watch] [--out dir] [--eval]
 //   --watch  rebuild whenever src/, manifest/ or assets/ change
 //   --out    write <dir>/chrome and <dir>/firefox instead of dist/
+//   --eval   the evaluation build (eval/ext/content.js as the content
+//            script, which test drivers can control) into eval/build/
 import * as esbuild from 'esbuild';
 import { cpSync, mkdirSync, readdirSync, rmSync, statSync, watch, writeFileSync } from 'node:fs';
 import { join, resolve } from 'node:path';
@@ -38,7 +40,8 @@ const sharedFiles = {
   'silero_vad.onnx': 'assets/silero_vad.onnx',
 };
 
-async function buildAll(outRoot, { clean }) {
+async function buildAll(outRoot, { clean, evalBuild }) {
+  const contentEntry = evalBuild ? { 'content.js': 'eval/ext/content.js' } : {};
   for (const [browser, { scripts, files }] of Object.entries(targets)) {
     const dir = join(outRoot, browser);
     // Watch rebuilds keep the directory, so that `web-ext run` keeps
@@ -48,7 +51,7 @@ async function buildAll(outRoot, { clean }) {
     mkdirSync(dir, { recursive: true });
     await esbuild.build({
       absWorkingDir: root,
-      entryPoints: Object.entries({ ...sharedScripts, ...scripts }).map(([out, src]) => ({ in: src, out: out.replace(/\.js$/, '') })),
+      entryPoints: Object.entries({ ...sharedScripts, ...scripts, ...contentEntry }).map(([out, src]) => ({ in: src, out: out.replace(/\.js$/, '') })),
       bundle: true,
       format: 'iife',
       target: 'es2022',
@@ -74,18 +77,19 @@ function dirBytes(dir) {
 
 const args = process.argv.slice(2);
 const oi = args.indexOf('--out');
-const outRoot = oi >= 0 ? resolve(args[oi + 1]) : join(root, 'dist');
+const evalBuild = args.includes('--eval');
+const outRoot = oi >= 0 ? resolve(args[oi + 1]) : join(root, evalBuild ? 'eval/build' : 'dist');
 
 if (!args.includes('--watch')) {
-  await buildAll(outRoot, { clean: true });
+  await buildAll(outRoot, { clean: true, evalBuild });
 } else {
   // A failed build is reported and the watch goes on
   const report = (e) => console.error(e.message);
-  await buildAll(outRoot, { clean: true }).catch(report);
+  await buildAll(outRoot, { clean: true, evalBuild }).catch(report);
   let timer = null;
   let running = Promise.resolve();
   const rebuild = () => {
-    running = running.then(() => buildAll(outRoot, { clean: false })).catch(report);
+    running = running.then(() => buildAll(outRoot, { clean: false, evalBuild })).catch(report);
   };
   for (const dir of ['src', 'manifest', 'assets']) {
     watch(join(root, dir), { recursive: true }, () => {

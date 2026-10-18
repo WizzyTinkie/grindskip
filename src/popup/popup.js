@@ -1,6 +1,6 @@
 // The toolbar popup: the settings, saved straight to storage (the content
 // scripts follow storage), and the state of the active tab's video.
-import { RESUME, STATUS } from '../shared/messages.js';
+import { RECORD_START, RECORD_STOP, RESUME, STATUS } from '../shared/messages.js';
 import { DEFAULTS, RANGES, load, migrate, save } from '../shared/settings.js';
 
 const api = globalThis.browser ?? globalThis.chrome;
@@ -16,6 +16,8 @@ const FORMAT = {
 
 const $ = (id) => document.getElementById(id);
 let settings = DEFAULTS;
+let recording = false;
+let saved = null;        // the last recording's file name
 
 function render() {
   $('enabled').checked = settings.enabled;
@@ -48,6 +50,12 @@ $('resume').addEventListener('click', async () => {
   poll();
 });
 
+$('record').addEventListener('click', async () => {
+  const r = await send({ type: recording ? RECORD_STOP : RECORD_START });
+  saved = r?.file ? `Saved to your downloads as ${r.file}` : null;
+  poll();
+});
+
 async function send(msg) {
   const [tab] = await api.tabs.query({ active: true, currentWindow: true });
   if (!tab?.id) return null;
@@ -60,7 +68,7 @@ async function send(msg) {
 
 function showStatus(s) {
   let state = '–';
-  let note = s?.note ?? null;
+  let note = s?.note ?? saved;
   if (!s) note = 'Grindskip can’t run on this page.';
   else if (!s.enabled) state = 'Off';
   else if (!s.video) state = 'No video';
@@ -71,6 +79,14 @@ function showStatus(s) {
   $('note').textContent = note ?? '';
   $('note').hidden = !note;
   $('resume').hidden = !s?.overridden;
+  recording = !!s?.recording;
+  $('record-box').hidden = !(s?.enabled && s.video) && !recording;
+  $('record').textContent = recording ? `Stop and save (${clock(s.recording.seconds)}${s.recording.full ? ', full' : ''})` : 'Start a debug recording';
+}
+
+function clock(sec) {
+  const m = Math.floor(sec / 60);
+  return `${m}:${String(Math.floor(sec % 60)).padStart(2, '0')}`;
 }
 
 async function poll() {
