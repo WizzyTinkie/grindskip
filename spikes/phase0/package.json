@@ -1,0 +1,17 @@
+{
+  "name": "grindskip-phase0-spikes",
+  "private": true,
+  "type": "module",
+  "description": "Phase 0 spikes: where the model runs, sped-up speech, cost, Firefox basics",
+  "dependencies": {
+    "onnxruntime-web": "^1.30.0"
+  },
+  "devDependencies": {
+    "esbuild": "^0.28.2",
+    "puppeteer": "^25.14.0"
+  },
+  "allowScripts": {
+    "esbuild@0.28.2": true,
+    "puppeteer@25.14.0": true
+  }
+}

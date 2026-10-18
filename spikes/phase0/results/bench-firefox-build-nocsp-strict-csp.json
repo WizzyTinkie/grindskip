@@ -1,0 +1,46 @@
+{
+ "url": "http://127.0.0.1:38305/pages/player.html?src=/media/bumpy_0-120.webm&csp=strict",
+ "ping": {
+  "env": {
+   "userAgent": "Mozilla/5.0 (X11; Linux x86_64; rv:157.0) Gecko/20100101 Firefox/157.0",
+   "crossOriginIsolated": false,
+   "hasSharedArrayBuffer": false,
+   "hardwareConcurrency": 24,
+   "captureStream": "function",
+   "mozCaptureStream": "function"
+  },
+  "href": "http://127.0.0.1:38305/pages/player.html?src=/media/bumpy_0-120.webm&csp=strict"
+ },
+ "ok": true,
+ "load": {
+  "model": "silero_vad_v6.2_16k",
+  "wasmLoad": "url",
+  "fetchMs": 12,
+  "initMs": 117,
+  "wasmBytes": null,
+  "modelBytes": 1289603,
+  "wasmMemoryBytes": null
+ },
+ "perFrameMs": {
+  "n": 450,
+  "mean": 0.31555555555555553,
+  "p50": 0,
+  "p95": 1,
+  "p99": 1,
+  "max": 2
+ },
+ "batchMsPerFrame": 0.3244444444444444,
+ "env": {
+  "userAgent": "Mozilla/5.0 (X11; Linux x86_64; rv:157.0) Gecko/20100101 Firefox/157.0",
+  "crossOriginIsolated": false,
+  "hasSharedArrayBuffer": false,
+  "hardwareConcurrency": 24,
+  "captureStream": "function",
+  "mozCaptureStream": "function"
+ },
+ "strictCapture": {
+  "csp": "default-src 'self'; script-src 'self'; object-src 'none'; media-src 'self' blob:; require-trusted-types-for 'script'",
+  "frames": 155,
+  "speechShare": 0.9290322580645162
+ }
+}

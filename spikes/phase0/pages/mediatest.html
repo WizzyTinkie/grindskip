@@ -1,0 +1,85 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>Grindskip spike media test</title>
+<style>body { margin: 0; background: #111; } video { width: 960px; height: 540px; display: block; }</style>
+<video id="v" playsinline preload="auto"></video>
+<script>
+  // Captures the video's audio through the planned path (capture stream ->
+  // AnalyserNode polled every 30 ms) and logs every poll and speed change,
+  // so the driver can measure the speed-change lag, the mute limit and
+  // whether capturing silences the element. Runs in the page's own world.
+  const v = document.getElementById('v');
+  const SEC = 180;
+  const SRC = '/media/sweep.webm';
+
+  // ?mse=1 feeds the file through Media Source Extensions, like YouTube
+  if (new URLSearchParams(location.search).get('mse')) {
+    const ms = new MediaSource();
+    v.src = URL.createObjectURL(ms);
+    ms.addEventListener('sourceopen', async () => {
+      // Like YouTube: one SourceBuffer for audio and one for video
+      const parts = [['audio/webm; codecs="opus"', '/media/sweep-audio.webm'], ['video/webm; codecs="vp9"', '/media/sweep-video.webm']];
+      await Promise.all(parts.map(async ([type, url]) => {
+        const sb = ms.addSourceBuffer(type);
+        const data = await (await fetch(url)).arrayBuffer();
+        await new Promise((ok) => { sb.addEventListener('updateend', ok, { once: true }); sb.appendBuffer(data); });
+      }));
+      ms.endOfStream();
+    }, { once: true });
+  } else {
+    v.src = SRC;
+  }
+  const mt = window.mt = {
+    ctx: null, source: null, analyser: null, timer: null,
+    samples: null, fill: 0, polls: [], events: [],
+
+    async setup({ method = 'captureStream' } = {}) {
+      const ctx = this.ctx = new AudioContext();
+      if (ctx.state === 'suspended') await ctx.resume();
+      const stream = v[method]();
+      this.source = ctx.createMediaStreamSource(stream);
+      this.analyser = ctx.createAnalyser();
+      this.analyser.fftSize = 32768;
+      this.source.connect(this.analyser);
+      this.samples = new Float32Array(ctx.sampleRate * SEC);
+      const buf = new Float32Array(this.analyser.fftSize);
+      let last = ctx.currentTime;
+      this.timer = setInterval(() => {
+        const t = ctx.currentTime;
+        const n = Math.min(buf.length, Math.round((t - last) * ctx.sampleRate));
+        last = t;
+        this.analyser.getFloatTimeDomainData(buf);
+        const room = Math.min(n, this.samples.length - this.fill);
+        this.samples.set(buf.subarray(buf.length - n, buf.length - n + room), this.fill);
+        this.fill += room;
+        this.polls.push({ wall: performance.now(), epoch: Date.now(), ctxTime: t, currentTime: v.currentTime, rate: v.playbackRate, cum: this.fill, n });
+      }, 30);
+      this.log('setup', { method, sampleRate: ctx.sampleRate, baseLatency: ctx.baseLatency, outputLatency: ctx.outputLatency });
+      return { method, sampleRate: ctx.sampleRate, tracks: stream.getAudioTracks().length };
+    },
+
+    connectOut() { this.source.connect(this.ctx.destination); this.log('connectOut'); },
+
+    setRate(rate) {
+      let error = null;
+      try { v.playbackRate = rate; } catch (e) { error = `${e.name}: ${e.message}`; }
+      this.log('rate', { rate, actual: v.playbackRate, error });
+      return { actual: v.playbackRate, error };
+    },
+
+    log(name, data = {}) {
+      this.events.push({ name, wall: performance.now(), epoch: Date.now(), ctxTime: this.ctx?.currentTime ?? null, currentTime: v.currentTime, ...data });
+    },
+
+    dump() {
+      clearInterval(this.timer);
+      const s = this.samples ? this.samples.subarray(0, this.fill) : new Float32Array(0);
+      const i16 = new Int16Array(s.length);
+      for (let i = 0; i < s.length; i++) i16[i] = Math.max(-32768, Math.min(32767, Math.round(s[i] * 32767)));
+      const bytes = new Uint8Array(i16.buffer);
+      let bin = '';
+      for (let i = 0; i < bytes.length; i += 0x8000) bin += String.fromCharCode.apply(null, bytes.subarray(i, i + 0x8000));
+      return JSON.stringify({ sampleRate: this.ctx?.sampleRate ?? null, pcm16: btoa(bin), polls: this.polls, events: this.events });
+    },
+  };
+</script>

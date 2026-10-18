@@ -1,0 +1,11 @@
+{
+ "browser": "chrome",
+ "target": "bg",
+ "sent": 11249,
+ "replies": 11249,
+ "errors": 0,
+ "disconnects": [],
+ "maxReplyGapMs": 260.5,
+ "lastError": null,
+ "wallSec": 360.00040000000223
+}

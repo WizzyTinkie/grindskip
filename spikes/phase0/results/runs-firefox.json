@@ -1,0 +1,587 @@
+[
+ {
+  "clip": "bumpy",
+  "speed": 1,
+  "method": "captureStream",
+  "sampleRate": 48000,
+  "wallSec": 120.578,
+  "frames": 3762,
+  "overflow": 0,
+  "captureLatencyWallSec": -0.032,
+  "alignCorr": 0.995,
+  "cost": {
+   "wallSec": 120.389,
+   "busyMsPerSec": 19.77755442773011,
+   "pollMs": {
+    "n": 3999,
+    "mean": 0.09902475618904726,
+    "p50": 0,
+    "p95": 1,
+    "p99": 1,
+    "max": 2
+   },
+   "inferMs": {
+    "n": 3762,
+    "mean": 0.5276448697501329,
+    "p50": 1,
+    "p95": 1,
+    "p99": 2,
+    "max": 3
+   },
+   "pollIntervalMs": {
+    "n": 3998,
+    "mean": 30.11230615307654,
+    "p50": 30,
+    "p95": 31,
+    "p99": 32,
+    "max": 35
+   }
+  }
+ },
+ {
+  "clip": "bumpy",
+  "speed": 2,
+  "method": "captureStream",
+  "sampleRate": 48000,
+  "wallSec": 60.458,
+  "frames": 1885,
+  "overflow": 0,
+  "captureLatencyWallSec": 0.032,
+  "alignCorr": 0.906,
+  "cost": {
+   "wallSec": 60.324,
+   "busyMsPerSec": 19.909157217691135,
+   "pollMs": {
+    "n": 2001,
+    "mean": 0.12343828085957022,
+    "p50": 0,
+    "p95": 1,
+    "p99": 1,
+    "max": 2
+   },
+   "inferMs": {
+    "n": 1885,
+    "mean": 0.5061007957559682,
+    "p50": 0,
+    "p95": 1,
+    "p99": 2,
+    "max": 2
+   },
+   "pollIntervalMs": {
+    "n": 2000,
+    "mean": 30.162,
+    "p50": 30,
+    "p95": 31,
+    "p99": 32,
+    "max": 35
+   }
+  }
+ },
+ {
+  "clip": "bumpy",
+  "speed": 2.5,
+  "method": "captureStream",
+  "sampleRate": 48000,
+  "wallSec": 48.52,
+  "frames": 1512,
+  "overflow": 0,
+  "captureLatencyWallSec": 0.05,
+  "alignCorr": 0.862,
+  "cost": {
+   "wallSec": 48.371,
+   "busyMsPerSec": 22.699551384093773,
+   "pollMs": {
+    "n": 1548,
+    "mean": 0.11498708010335917,
+    "p50": 0,
+    "p95": 1,
+    "p99": 1,
+    "max": 1
+   },
+   "inferMs": {
+    "n": 1512,
+    "mean": 0.6084656084656085,
+    "p50": 1,
+    "p95": 1,
+    "p99": 2,
+    "max": 2
+   },
+   "pollIntervalMs": {
+    "n": 1547,
+    "mean": 31.267614738202973,
+    "p50": 32,
+    "p95": 33,
+    "p99": 33,
+    "max": 34
+   }
+  }
+ },
+ {
+  "clip": "bumpy",
+  "speed": 3,
+  "method": "captureStream",
+  "sampleRate": 48000,
+  "wallSec": 40.453,
+  "frames": 1259,
+  "overflow": 0,
+  "captureLatencyWallSec": 0.055,
+  "alignCorr": 0.821,
+  "cost": {
+   "wallSec": 40.294,
+   "busyMsPerSec": 22.58400754454758,
+   "pollMs": {
+    "n": 1304,
+    "mean": 0.1357361963190184,
+    "p50": 0,
+    "p95": 1,
+    "p99": 1,
+    "max": 1
+   },
+   "inferMs": {
+    "n": 1259,
+    "mean": 0.5822081016679904,
+    "p50": 1,
+    "p95": 1,
+    "p99": 2,
+    "max": 2
+   },
+   "pollIntervalMs": {
+    "n": 1303,
+    "mean": 30.924021488871833,
+    "p50": 31,
+    "p95": 33,
+    "p99": 34,
+    "max": 35
+   }
+  }
+ },
+ {
+  "clip": "bumpy",
+  "speed": 4,
+  "method": "captureStream",
+  "sampleRate": 48000,
+  "wallSec": 30.46,
+  "frames": 948,
+  "overflow": 0,
+  "captureLatencyWallSec": 0.046,
+  "alignCorr": 0.759,
+  "cost": {
+   "wallSec": 30.333,
+   "busyMsPerSec": 23.14311146276333,
+   "pollMs": {
+    "n": 1005,
+    "mean": 0.12139303482587065,
+    "p50": 0,
+    "p95": 1,
+    "p99": 1,
+    "max": 2
+   },
+   "inferMs": {
+    "n": 948,
+    "mean": 0.6118143459915611,
+    "p50": 1,
+    "p95": 1,
+    "p99": 2,
+    "max": 2
+   },
+   "pollIntervalMs": {
+    "n": 1004,
+    "mean": 30.21215139442231,
+    "p50": 30,
+    "p95": 31,
+    "p99": 31,
+    "max": 32
+   }
+  }
+ },
+ {
+  "clip": "mattg",
+  "speed": 1,
+  "method": "captureStream",
+  "sampleRate": 48000,
+  "wallSec": 120.559,
+  "frames": 3762,
+  "overflow": 0,
+  "captureLatencyWallSec": -0.032,
+  "alignCorr": 0.993,
+  "cost": {
+   "wallSec": 120.377,
+   "busyMsPerSec": 20.161658788639027,
+   "pollMs": {
+    "n": 4000,
+    "mean": 0.11025,
+    "p50": 0,
+    "p95": 1,
+    "p99": 1,
+    "max": 2
+   },
+   "inferMs": {
+    "n": 3762,
+    "mean": 0.5279106858054227,
+    "p50": 1,
+    "p95": 1,
+    "p99": 2,
+    "max": 2
+   },
+   "pollIntervalMs": {
+    "n": 3999,
+    "mean": 30.101775443860966,
+    "p50": 30,
+    "p95": 31,
+    "p99": 31,
+    "max": 35
+   }
+  }
+ },
+ {
+  "clip": "mattg",
+  "speed": 2,
+  "method": "captureStream",
+  "sampleRate": 48000,
+  "wallSec": 60.479,
+  "frames": 1885,
+  "overflow": 0,
+  "captureLatencyWallSec": 0.014,
+  "alignCorr": 0.927,
+  "cost": {
+   "wallSec": 60.323,
+   "busyMsPerSec": 21.15279412496063,
+   "pollMs": {
+    "n": 2001,
+    "mean": 0.10394802598700649,
+    "p50": 0,
+    "p95": 1,
+    "p99": 1,
+    "max": 1
+   },
+   "inferMs": {
+    "n": 1885,
+    "mean": 0.5665782493368701,
+    "p50": 1,
+    "p95": 1,
+    "p99": 2,
+    "max": 2
+   },
+   "pollIntervalMs": {
+    "n": 2000,
+    "mean": 30.1615,
+    "p50": 30,
+    "p95": 31,
+    "p99": 32,
+    "max": 34
+   }
+  }
+ },
+ {
+  "clip": "mattg",
+  "speed": 2.5,
+  "method": "captureStream",
+  "sampleRate": 48000,
+  "wallSec": 48.518,
+  "frames": 1512,
+  "overflow": 0,
+  "captureLatencyWallSec": 0.051,
+  "alignCorr": 0.908,
+  "cost": {
+   "wallSec": 48.379,
+   "busyMsPerSec": 20.93883709874119,
+   "pollMs": {
+    "n": 1548,
+    "mean": 0.12144702842377261,
+    "p50": 0,
+    "p95": 1,
+    "p99": 1,
+    "max": 1
+   },
+   "inferMs": {
+    "n": 1512,
+    "mean": 0.5456349206349206,
+    "p50": 1,
+    "p95": 1,
+    "p99": 2,
+    "max": 2
+   },
+   "pollIntervalMs": {
+    "n": 1547,
+    "mean": 31.27278603749192,
+    "p50": 32,
+    "p95": 33,
+    "p99": 33,
+    "max": 34
+   }
+  }
+ },
+ {
+  "clip": "mattg",
+  "speed": 3,
+  "method": "captureStream",
+  "sampleRate": 48000,
+  "wallSec": 40.442,
+  "frames": 1260,
+  "overflow": 0,
+  "captureLatencyWallSec": 0.055,
+  "alignCorr": 0.877,
+  "cost": {
+   "wallSec": 40.312,
+   "busyMsPerSec": 21.507243500694585,
+   "pollMs": {
+    "n": 1304,
+    "mean": 0.12346625766871165,
+    "p50": 0,
+    "p95": 1,
+    "p99": 1,
+    "max": 2
+   },
+   "inferMs": {
+    "n": 1260,
+    "mean": 0.5603174603174603,
+    "p50": 1,
+    "p95": 1,
+    "p99": 2,
+    "max": 2
+   },
+   "pollIntervalMs": {
+    "n": 1303,
+    "mean": 30.93783576362241,
+    "p50": 31,
+    "p95": 34,
+    "p99": 34,
+    "max": 35
+   }
+  }
+ },
+ {
+  "clip": "mattg",
+  "speed": 4,
+  "method": "captureStream",
+  "sampleRate": 48000,
+  "wallSec": 30.449,
+  "frames": 948,
+  "overflow": 0,
+  "captureLatencyWallSec": 0.085,
+  "alignCorr": 0.804,
+  "cost": {
+   "wallSec": 30.329,
+   "busyMsPerSec": 19.156582808533088,
+   "pollMs": {
+    "n": 1005,
+    "mean": 0.09751243781094528,
+    "p50": 0,
+    "p95": 1,
+    "p99": 1,
+    "max": 2
+   },
+   "inferMs": {
+    "n": 948,
+    "mean": 0.509493670886076,
+    "p50": 0,
+    "p95": 1,
+    "p99": 2,
+    "max": 2
+   },
+   "pollIntervalMs": {
+    "n": 1004,
+    "mean": 30.20816733067729,
+    "p50": 30,
+    "p95": 31,
+    "p99": 31,
+    "max": 33
+   }
+  }
+ },
+ {
+  "clip": "nocomm",
+  "speed": 1,
+  "method": "captureStream",
+  "sampleRate": 48000,
+  "wallSec": 120.593,
+  "frames": 3762,
+  "overflow": 0,
+  "captureLatencyWallSec": -0.032,
+  "alignCorr": 0.994,
+  "cost": {
+   "wallSec": 120.394,
+   "busyMsPerSec": 17.79158429822084,
+   "pollMs": {
+    "n": 3998,
+    "mean": 0.09929964982491246,
+    "p50": 0,
+    "p95": 1,
+    "p99": 1,
+    "max": 2
+   },
+   "inferMs": {
+    "n": 3762,
+    "mean": 0.46384901648059546,
+    "p50": 0,
+    "p95": 1,
+    "p99": 2,
+    "max": 2
+   },
+   "pollIntervalMs": {
+    "n": 3997,
+    "mean": 30.121090818113586,
+    "p50": 30,
+    "p95": 31,
+    "p99": 33,
+    "max": 34
+   }
+  }
+ },
+ {
+  "clip": "nocomm",
+  "speed": 2,
+  "method": "captureStream",
+  "sampleRate": 48000,
+  "wallSec": 60.44,
+  "frames": 1884,
+  "overflow": 0,
+  "captureLatencyWallSec": 0.032,
+  "alignCorr": 0.942,
+  "cost": {
+   "wallSec": 60.286,
+   "busyMsPerSec": 21.182364064625286,
+   "pollMs": {
+    "n": 2001,
+    "mean": 0.11294352823588207,
+    "p50": 0,
+    "p95": 1,
+    "p99": 1,
+    "max": 2
+   },
+   "inferMs": {
+    "n": 1884,
+    "mean": 0.557855626326964,
+    "p50": 1,
+    "p95": 1,
+    "p99": 1,
+    "max": 3
+   },
+   "pollIntervalMs": {
+    "n": 2000,
+    "mean": 30.143,
+    "p50": 30,
+    "p95": 31,
+    "p99": 32,
+    "max": 34
+   }
+  }
+ },
+ {
+  "clip": "nocomm",
+  "speed": 2.5,
+  "method": "captureStream",
+  "sampleRate": 48000,
+  "wallSec": 48.526,
+  "frames": 1512,
+  "overflow": 0,
+  "captureLatencyWallSec": 0.03,
+  "alignCorr": 0.929,
+  "cost": {
+   "wallSec": 48.389,
+   "busyMsPerSec": 20.50052697927215,
+   "pollMs": {
+    "n": 1549,
+    "mean": 0.11491284699806327,
+    "p50": 0,
+    "p95": 1,
+    "p99": 1,
+    "max": 1
+   },
+   "inferMs": {
+    "n": 1512,
+    "mean": 0.5383597883597884,
+    "p50": 1,
+    "p95": 1,
+    "p99": 1,
+    "max": 2
+   },
+   "pollIntervalMs": {
+    "n": 1548,
+    "mean": 31.25904392764858,
+    "p50": 32,
+    "p95": 33,
+    "p99": 33,
+    "max": 34
+   }
+  }
+ },
+ {
+  "clip": "nocomm",
+  "speed": 3,
+  "method": "captureStream",
+  "sampleRate": 48000,
+  "wallSec": 40.456,
+  "frames": 1260,
+  "overflow": 0,
+  "captureLatencyWallSec": 0.055,
+  "alignCorr": 0.9,
+  "cost": {
+   "wallSec": 40.311,
+   "busyMsPerSec": 21.11086303986505,
+   "pollMs": {
+    "n": 1306,
+    "mean": 0.11332312404287902,
+    "p50": 0,
+    "p95": 1,
+    "p99": 1,
+    "max": 1
+   },
+   "inferMs": {
+    "n": 1260,
+    "mean": 0.557936507936508,
+    "p50": 1,
+    "p95": 1,
+    "p99": 2,
+    "max": 2
+   },
+   "pollIntervalMs": {
+    "n": 1305,
+    "mean": 30.889655172413793,
+    "p50": 31,
+    "p95": 34,
+    "p99": 34,
+    "max": 35
+   }
+  }
+ },
+ {
+  "clip": "nocomm",
+  "speed": 4,
+  "method": "captureStream",
+  "sampleRate": 48000,
+  "wallSec": 30.451,
+  "frames": 948,
+  "overflow": 0,
+  "captureLatencyWallSec": 0.069,
+  "alignCorr": 0.857,
+  "cost": {
+   "wallSec": 30.333,
+   "busyMsPerSec": 20.34088286684469,
+   "pollMs": {
+    "n": 1005,
+    "mean": 0.13532338308457711,
+    "p50": 0,
+    "p95": 1,
+    "p99": 1,
+    "max": 2
+   },
+   "inferMs": {
+    "n": 948,
+    "mean": 0.5073839662447257,
+    "p50": 0,
+    "p95": 1,
+    "p99": 2,
+    "max": 2
+   },
+   "pollIntervalMs": {
+    "n": 1004,
+    "mean": 30.21215139442231,
+    "p50": 30,
+    "p95": 31,
+    "p99": 31,
+    "max": 34
+   }
+  }
+ }
+]

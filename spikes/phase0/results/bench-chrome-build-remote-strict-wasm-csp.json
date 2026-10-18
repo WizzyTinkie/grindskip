@@ -1,0 +1,46 @@
+{
+ "url": "http://127.0.0.1:34013/pages/player.html?src=/media/bumpy_0-120.webm&csp=strict-wasm",
+ "ping": {
+  "env": {
+   "userAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/155.0.0.0 Safari/537.36",
+   "crossOriginIsolated": false,
+   "hasSharedArrayBuffer": false,
+   "hardwareConcurrency": 24,
+   "captureStream": "function",
+   "mozCaptureStream": "undefined"
+  },
+  "href": "http://127.0.0.1:34013/pages/player.html?src=/media/bumpy_0-120.webm&csp=strict-wasm"
+ },
+ "ok": true,
+ "load": {
+  "model": "silero_vad_v6.2_16k",
+  "wasmLoad": "url",
+  "fetchMs": 7.199999999254942,
+  "initMs": 192.39999999850988,
+  "wasmBytes": null,
+  "modelBytes": 1289603,
+  "wasmMemoryBytes": null
+ },
+ "perFrameMs": {
+  "n": 250,
+  "mean": 0.338,
+  "p50": 0.30000000074505806,
+  "p95": 0.4000000022351742,
+  "p99": 1.4000000022351742,
+  "max": 2.300000000745058
+ },
+ "batchMsPerFrame": 0.3495999999940395,
+ "env": {
+  "userAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/155.0.0.0 Safari/537.36",
+  "crossOriginIsolated": false,
+  "hasSharedArrayBuffer": false,
+  "hardwareConcurrency": 24,
+  "captureStream": "function",
+  "mozCaptureStream": "undefined"
+ },
+ "strictCapture": {
+  "csp": "default-src 'self'; script-src 'self' 'wasm-unsafe-eval'; object-src 'none'; media-src 'self' blob:; require-trusted-types-for 'script'",
+  "frames": 155,
+  "speechShare": 0.9096774193548387
+ }
+}
