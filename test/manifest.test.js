@@ -26,6 +26,18 @@ test('Chrome gets the offscreen permission and a service worker', () => {
   assert.equal(m.browser_specific_settings, undefined);
 });
 
+test('Chrome lets the offscreen document compile WebAssembly', () => {
+  // The default MV3 policy for extension pages doesn't
+  const csp = manifestFor('chrome', root).content_security_policy.extension_pages;
+  assert.match(csp, /script-src 'self' 'wasm-unsafe-eval'/);
+});
+
+test('both have a popup', () => {
+  for (const browser of ['chrome', 'firefox']) {
+    assert.equal(manifestFor(browser, root).action.default_popup, 'popup.html', browser);
+  }
+});
+
 test('Firefox gets a fixed add-on ID and requires version 149', () => {
   const m = manifestFor('firefox', root);
   assert.equal(m.version, version);

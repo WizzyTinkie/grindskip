@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Grindskip</title>
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <header>
+    <h1>Grindskip</h1>
+    <label class="switch" title="Turn Grindskip on or off">
+      <input type="checkbox" id="enabled">
+      <span class="slot" aria-hidden="true"></span>
+      <span class="sr">On</span>
+    </label>
+  </header>
+
+  <section class="status" aria-live="polite">
+    <div class="row"><span>Now</span><strong id="state">–</strong></div>
+    <div class="row"><span>Speed</span><strong id="speed">–</strong></div>
+    <p id="note" class="note" hidden></p>
+    <button id="resume" type="button" hidden>Change the speed again</button>
+  </section>
+
+  <section class="controls">
+    <label class="slider">
+      <span class="label">Speed while talking <output id="talkSpeed-out"></output></span>
+      <input type="range" id="talkSpeed">
+    </label>
+    <label class="slider">
+      <span class="label">Speed while playing <output id="playSpeed-out"></output></span>
+      <input type="range" id="playSpeed">
+    </label>
+    <p id="fast-note" class="hint" hidden>Above 3x, loud gameplay can be mistaken for speech and slow the video down.</p>
+    <label class="slider">
+      <span class="label">Wait before speeding up <output id="waitSec-out"></output></span>
+      <input type="range" id="waitSec">
+    </label>
+    <label class="slider">
+      <span class="label">Sensitivity <output id="sensitivity-out"></output></span>
+      <input type="range" id="sensitivity">
+    </label>
+    <label class="check">
+      <input type="checkbox" id="rewind">
+      <span>Rewind on speech <small>Jumps back to where the talking started</small></span>
+    </label>
+    <label class="check">
+      <input type="checkbox" id="overlay">
+      <span>Show the speech meter on the video</span>
+    </label>
+  </section>
+
+  <button id="reset" type="button" class="quiet">Reset to defaults</button>
+  <script src="popup.js"></script>
+</body>
+</html>
