@@ -1,0 +1,34 @@
+{
+  "name": "grindskip",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Plays gameplay videos fast while no one is talking and at normal speed while someone is",
+  "license": "Apache-2.0",
+  "engines": {
+    "node": ">=24"
+  },
+  "scripts": {
+    "build": "node scripts/build.mjs",
+    "watch": "node scripts/build.mjs --watch",
+    "test": "node --test \"test/**/*.test.js\"",
+    "lint": "eslint . && node scripts/build.mjs && web-ext lint",
+    "start:firefox": "web-ext run"
+  },
+  "webExt": {
+    "sourceDir": "dist/firefox"
+  },
+  "dependencies": {
+    "onnxruntime-web": "^1.30.0"
+  },
+  "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "esbuild": "^0.28.2",
+    "eslint": "^10.13.0",
+    "globals": "^17.13.0",
+    "web-ext": "^10.8.0"
+  },
+  "allowScripts": {
+    "esbuild@0.28.2": true
+  }
+}

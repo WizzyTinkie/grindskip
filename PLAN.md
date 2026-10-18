@@ -17,6 +17,8 @@ Grindskip grows out of [speech-speed-firefox-advanced](https://github.com/WizzyT
 | Rewind on speech | Included in v1 as an opt-in setting, off by default. |
 | Distribution | Publish to the Chrome Web Store and Firefox Add-ons (AMO). |
 | Browser versions | Latest Chrome; Firefox 149 and newer (the first with an unprefixed `captureStream()`). |
+| Sites | Every site (`<all_urls>`); YouTube is where it's tested and tuned. |
+| Data collection | None. The Firefox manifest declares it (`data_collection_permissions: none`). |
 
 ## Lessons carried over from the old repo
 
@@ -47,13 +49,14 @@ Phase 0's measurements behind these choices are in [spikes/phase0/REPORT.md](spi
 src/
   content/      video.js, capture.js, speed.js, overlay.js, main.js
   vad/          silero.js (model session and state), resample.js, remote.js (port client for the fallback)
+  background/   background.js (Chrome only: the service worker that opens the offscreen document)
   offscreen/    offscreen.html, offscreen.js (Chrome only: serves the model over a port)
   controller/   controller.js (pure decision logic)
   popup/        popup.html, popup.js, popup.css
   shared/       settings.js (defaults, storage, migration)
 assets/         icons, silero_vad.onnx (v6.2, 16 kHz export)
 manifest/       base.json, chrome.json, firefox.json
-scripts/        build.mjs (esbuild, copies wasm and model, writes dist/<browser>)
+scripts/        build.mjs (esbuild, copies wasm and model, writes dist/<browser>), manifest.mjs (merges the manifests)
 test/           unit tests (Node's built-in test runner)
 eval/           evaluation harness and labelled samples
 spikes/phase0/  Phase 0 spike code, measurements and report (not shipped)
@@ -72,7 +75,14 @@ Result: go. See [spikes/phase0/REPORT.md](spikes/phase0/REPORT.md). In short: th
 
 Exit: the architecture is chosen, starting thresholds are known, and there's a go/no-go decision.
 
-### Phase 1: Scaffold
+### Phase 1: Scaffold — done
+
+Result: `npm run build` produces both extensions; they load in Chrome for Testing 155 and Firefox 157, and in Chrome the model and the `.wasm` can be fetched from a web page. The source files are empty entry points for Phase 2. Settled along the way:
+
+- The content script and the web-accessible resources match `<all_urls>`, so Grindskip works on any site with a `<video>`. In Chrome, sites whose CSP blocks WebAssembly in the content script are what the offscreen fallback is for.
+- The Firefox add-on ID is `grindskip@wizzytinkie.github.io`, and the manifest declares `data_collection_permissions: none`, which AMO requires of new add-ons.
+- Chrome's offscreen document needs a service worker to open it (`src/background/`).
+- `assets/silero_vad.onnx` is committed; its source commit and SHA-256 are in `THIRD_PARTY_NOTICES.md`, and a test checks the hash.
 
 - `package.json` with `onnxruntime-web` as a dependency, and esbuild, `web-ext` and ESLint as development dependencies.
 - `npm run build` writes `dist/chrome` and `dist/firefox` from `manifest/base.json` plus per-browser additions (Chrome: the `offscreen` permission; Firefox: a fixed add-on ID in `browser_specific_settings.gecko.id` and `strict_min_version` 149). The ORT `.wasm` and the model are web-accessible resources. `npm run watch` rebuilds on save.
@@ -118,7 +128,7 @@ Exit: the architecture is chosen, starting thresholds are known, and there's a g
 - README with credits, and the website text.
 - Privacy statement: no data collected, nothing leaves the device.
 - Firefox Add-ons: fixed add-on ID; the source code and build instructions are submitted with each release, because the code is bundled.
-- Chrome Web Store: developer account (one-time registration fee); justify the `offscreen` permission (reason `WORKERS`).
+- Chrome Web Store: developer account (one-time registration fee); justify the `offscreen` permission (reason `WORKERS`) and the access to all sites (any site's video can be sped up), which also means a longer review.
 - Optional: a reduced-operator ONNX Runtime build (only the operators Silero uses), if the installed size or the memory per tab needs to come down.
 
 ### Phase 5 (optional): Fine-tuning
@@ -142,4 +152,5 @@ If music or sound effects still trigger speech, fine-tune Silero on labelled gam
 - **YouTube tightens its CSP.** Chrome would then refuse WebAssembly in the content script; the offscreen-document fallback covers it.
 - **Memory.** The model costs about 100 MB per tab while it's loaded, mostly ONNX Runtime's compiled code. Load it only while on; a reduced-operator ORT build is the lever if needed.
 - **Vocals in game music count as speech.** Fine-tuning can help.
+- **Running on every site.** The content script loads in every page, so it must stay idle (no model, no capture) until a video plays with Grindskip on. Any page can also tell that Grindskip is installed by fetching its web-accessible files; Chrome's `use_dynamic_url` could hide them, if ORT still finds the `.wasm` that way.
 - **Store review of bundled code.** Keep the bundle unminified and the build reproducible.
