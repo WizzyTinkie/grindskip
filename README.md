@@ -44,6 +44,8 @@ Click the Grindskip button in the toolbar and turn it on. On any page with a vid
 
 If you change the speed yourself, Grindskip leaves it alone on that video until you click *Change the speed again* in the popup, or the next video starts.
 
+If it slows down or speeds up when it shouldn't, *Start a debug recording* in the popup, play the part where it happens, and click *Stop and save*. That saves the audio Grindskip analysed and its decisions to a file in your downloads (at most 10 minutes). Nothing is sent anywhere; share the file only if you want to.
+
 ## Layout
 
 - `src/`: the extension's code, bundled by esbuild: `content/` (video, capture, speed, overlay), `vad/` (Silero, resampler, offscreen client), `controller/` (the decisions), `popup/`, `shared/` (settings), and Chrome's `background/` and `offscreen/`
@@ -51,6 +53,7 @@ If you change the speed yourself, Grindskip leaves it alone on that video until 
 - `assets/`: the Silero model (and later the icons)
 - `scripts/build.mjs`: the build
 - `test/`: unit tests; `test/fixtures/traces.json` holds speech probabilities recorded in Phase 0, for replaying the controller
+- `eval/`: Phase 3's evaluation: records test clips in the browsers and replays them through the controller to score and tune it (see [eval/README.md](eval/README.md) and [eval/REPORT.md](eval/REPORT.md))
 - `spikes/phase0/`: Phase 0 experiments and measurements, not shipped
 
 ## License

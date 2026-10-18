@@ -18,18 +18,18 @@ export const FRAME_SEC = 0.032;
 
 export const PARAMS = Object.freeze({
   startLow: 0.5,             // start threshold at lowRate and slower
-  startHigh: 0.8,            // start threshold at highRate and faster
+  startHigh: 0.9,            // start threshold at highRate and faster
   lowRate: 1,
   highRate: 2,
   end: 0.35,                 // end threshold
   minHysteresis: 0.05,       // the end threshold stays at least this far below the start
-  minSpeechFrames: 3,        // frames in a row at gameplay speed before switching (96 ms)
+  minSpeechFrames: 2,        // frames in a row at gameplay speed before switching (64 ms)
   sensitivityStep: 0.05,     // start-threshold change per step of the sensitivity setting
-  maxStart: 0.95,
+  maxStart: 0.98,
   rewindMinGameplaySec: 3,   // rewind only after this long at gameplay speed...
   rewindAfterSeekSec: 5,     // ...and this long after a seek
   rewindMaxSec: 1.5,         // never further back than this
-  rewindMarginSec: 0.25,     // extra media time before the detected onset
+  rewindMarginSec: 0.5,      // extra media time before the detected onset
 });
 
 // Start threshold for audio playing at `rate`: interpolated linearly between

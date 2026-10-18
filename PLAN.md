@@ -47,7 +47,7 @@ Phase 0's measurements behind these choices are in [spikes/phase0/REPORT.md](spi
 
 ```
 src/
-  content/      video.js, capture.js, speed.js, overlay.js, main.js
+  content/      video.js, capture.js, speed.js, overlay.js, recorder.js (debug recording), main.js
   vad/          silero.js (model and per-stream state), resample.js, load.js (loads it in an extension context), remote.js (port client for the fallback)
   background/   background.js (Chrome only: the service worker that opens the offscreen document)
   offscreen/    offscreen.html, offscreen.js (Chrome only: serves the model over a port)
@@ -58,7 +58,7 @@ assets/         icons, silero_vad.onnx (v6.2, 16 kHz export)
 manifest/       base.json, chrome.json, firefox.json
 scripts/        build.mjs (esbuild, copies wasm and model, writes dist/<browser>), manifest.mjs (merges the manifests)
 test/           unit tests (Node's built-in test runner)
-eval/           evaluation harness and labelled samples
+eval/           evaluation harness: test set, browser recordings, offline replay and sweep (own package.json)
 spikes/phase0/  Phase 0 spike code, measurements and report (not shipped)
 ```
 
@@ -119,9 +119,18 @@ Result: Grindskip works end to end in Chrome for Testing 155 and Firefox 157, on
    - **Overlay:** speech probability meter and state, built with DOM calls.
    - **Settings:** saved in `storage.local`, with defaults and migration.
 
-### Phase 3: Evaluation and tuning
+### Phase 3: Evaluation and tuning — done, except the check on real hardware
 
-- **Test set:** 3–5 real segments, including the RISEN video (0–60 s: music intro, then continuous commentary) and long stretches of gameplay with little talking, where the false slowdowns happen. Speech times come from the auto-generated captions, corrected by hand where needed. Phase 0's three clips (`spikes/phase0/lib/clips.mjs`) are a starting point.
+Result: see [eval/REPORT.md](eval/REPORT.md). On the speech the model hears, at the default 2.5x, the controller meets the targets in both browsers: 96.8% (Chrome) and 95.7% (Firefox) of the commentary at talk speed, 98% of the rest at gameplay speed, no false slowdowns, a median delay of 0.10–0.26 s and 1.5% of a core for inference. With rewind on it reaches 98.7% and 97.4%, short of 99%. Against all of the auto-captions the share at talk speed is 92–93%, because some caption words in the gameplay stretches never register with the model at all. Settled along the way:
+
+- The test set is five sections of Risen Let's Plays, 13 minutes in all (`eval/lib/clips.mjs`). The RISEN video is [Morgannin's Part 1](https://www.youtube.com/watch?v=BFG1Q7zpNtE), whose music intro lasts 16 s rather than 60. A five-minute low-talk stretch of [another Morgannin video](https://www.youtube.com/watch?v=v4w8WzKm0Mg&t=390) covers long gameplay with few remarks.
+- Labels are the auto-captions as they are, without correction by hand; `[Music]` and similar tags don't count.
+- Recordings are made through the extension itself: an evaluation build (`node scripts/build.mjs --eval`) adds a hook to drive the content script from the page, which also gets around Firefox's WebDriver BiDi not opening extension pages.
+- New defaults from the sweep: start threshold 0.9 at gameplay speed (was 0.8) with 2 frames of minimum speech (was 3). At 4x this cuts false slowdowns from 8 to 3, and it is no worse at 2–3x. Rewind goes 0.5 s further back than the detected onset (was 0.25 s). The talk-speed start threshold (0.5) and the end threshold (0.35) made no measurable difference and stay.
+- The popup's debug recording saves to a file through a link in the page, which worked in both browsers.
+
+
+- **Test set:** 3–5 real segments, including the RISEN video (music intro, then continuous commentary) and long stretches of gameplay with little talking, where the false slowdowns happen. Speech times come from the auto-generated captions, corrected by hand where needed. Phase 0's three clips (`spikes/phase0/lib/clips.mjs`) are a starting point.
 - **Debug recording:** started by the user, it saves the analysed 16 kHz audio, probabilities, speeds and video times to a file.
 - **Offline replay:** the same controller and model run under Node on the recordings, for fast threshold sweeps. Record at each gameplay speed in the browser: Chrome's and Firefox's time-stretching differ from ffmpeg's and from each other, so ffmpeg copies are only a rough guide. Phase 0 showed that Node replay matches the browser's probabilities on the same audio.
 - **Metrics:**
@@ -148,18 +157,18 @@ If music or sound effects still trigger speech, fine-tune Silero on labelled gam
 
 ## Targets (measured on the test set)
 
-| Measure | Target |
-|---|---|
-| Commentary heard at talk speed | ≥ 95% (≥ 99% with rewind on) |
-| Non-commentary played at gameplay speed | ≥ 90% |
-| Median delay before switching to talk speed | ≤ 0.4 s |
-| CPU | ≤ 5% of one core |
+| Measure | Target | Phase 3, at 2.5x (Chrome / Firefox) |
+|---|---|---|
+| Commentary heard at talk speed | ≥ 95% (≥ 99% with rewind on) | 96.8 / 95.7% (98.7 / 97.4% with rewind) of the speech the model hears; 92.8 / 91.9% of all captioned speech |
+| Non-commentary played at gameplay speed | ≥ 90% | 97.9 / 97.7% |
+| Median delay before switching to talk speed | ≤ 0.4 s | 0.10 / 0.26 s |
+| CPU | ≤ 5% of one core | inference 1.4 / 1.5%; about 2% with capture (Phase 0) |
 | Package size | ≤ 15 MB zipped (4.8 MB in Phase 0; 15.7 MB unpacked) |
 | Browsers | Latest Chrome and Firefox, on YouTube |
 
 ## Risks
 
-- **Sped-up game sound is recognised as speech.** Phase 0 found that sped-up commentary is still recognised, but game sound and music look more like speech the faster they play, especially at 4x and in Chrome. Fixes: a higher start threshold at gameplay speed, a minimum speech duration, and a default gameplay speed of 2.5x.
+- **Sped-up game sound is recognised as speech.** Phase 0 found that sped-up commentary is still recognised, but game sound and music look more like speech the faster they play, especially at 4x and in Chrome. Fixes: a higher start threshold at gameplay speed (0.9 since Phase 3), a minimum speech duration, and a default gameplay speed of 2.5x. Phase 3 found no false slowdowns at 2.5x and 3x on its test set, but 1–2 per browser in 2 minutes of quiet media at 4x.
 - **YouTube tightens its CSP.** Chrome would then refuse WebAssembly in the content script; the offscreen-document fallback covers it.
 - **Memory.** The model costs about 100 MB per tab while it's loaded, mostly ONNX Runtime's compiled code. Load it only while on; a reduced-operator ORT build is the lever if needed.
 - **Vocals in game music count as speech.** Fine-tuning can help.
