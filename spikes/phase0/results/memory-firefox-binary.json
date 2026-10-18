@@ -1,0 +1,31 @@
+{
+ "browser": "firefox",
+ "wasmLoad": "binary",
+ "pageMB": 422.4,
+ "modelLoadedMB": 131.3,
+ "captureMB": -2.2,
+ "wasmHeapMB": 20.2,
+ "initMs": 115,
+ "final": [
+  {
+   "pid": 215477,
+   "kb": 422888,
+   "type": ""
+  },
+  {
+   "pid": 215680,
+   "kb": 171431,
+   "type": ""
+  },
+  {
+   "pid": 215570,
+   "kb": 36067,
+   "type": ""
+  },
+  {
+   "pid": 215614,
+   "kb": 19182,
+   "type": ""
+  }
+ ]
+}

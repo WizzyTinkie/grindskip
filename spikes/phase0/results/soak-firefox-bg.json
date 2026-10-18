@@ -1,0 +1,11 @@
+{
+ "browser": "firefox",
+ "target": "bg",
+ "sent": 11223,
+ "replies": 11223,
+ "errors": 0,
+ "disconnects": [],
+ "maxReplyGapMs": 146,
+ "lastError": null,
+ "wallSec": 360.033
+}

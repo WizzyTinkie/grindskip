@@ -1,0 +1,20 @@
+{
+ "url": "http://127.0.0.1:42263/pages/player.html?src=/media/bumpy_0-120.webm&csp=strict",
+ "ping": {
+  "env": {
+   "userAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/155.0.0.0 Safari/537.36",
+   "crossOriginIsolated": false,
+   "hasSharedArrayBuffer": false,
+   "hardwareConcurrency": 24,
+   "captureStream": "function",
+   "mozCaptureStream": "undefined"
+  },
+  "href": "http://127.0.0.1:42263/pages/player.html?src=/media/bumpy_0-120.webm&csp=strict"
+ },
+ "ok": false,
+ "error": {
+  "name": "Error",
+  "message": "no available backend found. ERR: [wasm] RuntimeError: Aborted(CompileError: WebAssembly.instantiate(): ). Build with -sASSERTIONS for more info.",
+  "stack": "Error: no available backend found. ERR: [wasm] RuntimeError: Aborted(CompileError: WebAssembly.instantiate(): ). Build with -sASSERTIONS for more info.\n    at pr (chrome-extension://ohhdjlkgpkobobnjhldliejjbkkibhab/content.js:101:21)\n    at async n.create (chrome-extension://ohhdjlkgpkobobnjhldliejjbkkibhab/content.js:563:22)\n    at async createSilero (chrome-extension://ohhdjlkgpkobobnjhldliejjbkkibhab/content.js:2692:21)\n    at async loadVad (chrome-extension://ohhdjlkgpkobobnjhldliejjbkkibhab/content.js:2838:17)\n    at async Object.bench (chrome-extension://ohhdjlkgpkobobnjhldliejjbkkibhab/content.js:2867:17)\n    at async HTMLDocument.<anonymous> (chrome-extension://ohhdjlkgpkobobnjhldliejjbkkibhab/content.js:3046:41)"
+ }
+}

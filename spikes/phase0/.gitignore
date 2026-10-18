@@ -1,0 +1,10 @@
+# Downloaded or generated inputs (see README.md)
+media/
+models/
+# Builds of the test extension
+build*/
+# Large measurement outputs: captured audio and per-frame traces
+results/pcm-*/
+results/traces-*.json
+results/scores-*.json
+results/*.log

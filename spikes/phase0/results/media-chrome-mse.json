@@ -1,0 +1,164 @@
+{
+ "browser": "chrome",
+ "mse": true,
+ "lag": {
+  "changes": [
+   {
+    "from": 1,
+    "to": 2.5,
+    "audioLagMs": 70,
+    "currentTimeLagMs": 125
+   },
+   {
+    "from": 2.5,
+    "to": 1,
+    "audioLagMs": 40,
+    "currentTimeLagMs": 100
+   },
+   {
+    "from": 1,
+    "to": 4,
+    "audioLagMs": 60,
+    "currentTimeLagMs": 105
+   },
+   {
+    "from": 4,
+    "to": 1,
+    "audioLagMs": 55,
+    "currentTimeLagMs": 90
+   },
+   {
+    "from": 1,
+    "to": 2,
+    "audioLagMs": 75,
+    "currentTimeLagMs": 100
+   },
+   {
+    "from": 2,
+    "to": 1,
+    "audioLagMs": 50,
+    "currentTimeLagMs": 75
+   },
+   {
+    "from": 1,
+    "to": 3,
+    "audioLagMs": 55,
+    "currentTimeLagMs": 80
+   },
+   {
+    "from": 3,
+    "to": 1,
+    "audioLagMs": 40,
+    "currentTimeLagMs": 65
+   }
+  ],
+  "trackPoints": 2592
+ },
+ "mute": [
+  {
+   "rate": 1,
+   "actual": 1,
+   "error": null,
+   "capturedDb": -9,
+   "heardDb": -9
+  },
+  {
+   "rate": 2,
+   "actual": 2,
+   "error": null,
+   "capturedDb": -9,
+   "heardDb": -9
+  },
+  {
+   "rate": 3,
+   "actual": 3,
+   "error": null,
+   "capturedDb": -9,
+   "heardDb": -9
+  },
+  {
+   "rate": 3.5,
+   "actual": 3.5,
+   "error": null,
+   "capturedDb": -9,
+   "heardDb": -9
+  },
+  {
+   "rate": 3.9,
+   "actual": 3.9,
+   "error": null,
+   "capturedDb": -9,
+   "heardDb": -9
+  },
+  {
+   "rate": 4,
+   "actual": 4,
+   "error": null,
+   "capturedDb": -9,
+   "heardDb": -9
+  },
+  {
+   "rate": 4.01,
+   "actual": 4.01,
+   "error": null,
+   "capturedDb": -9,
+   "heardDb": -9
+  },
+  {
+   "rate": 4.1,
+   "actual": 4.1,
+   "error": null,
+   "capturedDb": -9,
+   "heardDb": -9
+  },
+  {
+   "rate": 4.5,
+   "actual": 4.5,
+   "error": null,
+   "capturedDb": -9,
+   "heardDb": -9
+  },
+  {
+   "rate": 5,
+   "actual": 5,
+   "error": null,
+   "capturedDb": -9,
+   "heardDb": -9
+  },
+  {
+   "rate": 6,
+   "actual": 6,
+   "error": null,
+   "capturedDb": -9.6,
+   "heardDb": -9.6
+  },
+  {
+   "rate": 8,
+   "actual": 8,
+   "error": null,
+   "capturedDb": -9,
+   "heardDb": -9
+  },
+  {
+   "rate": 12,
+   "actual": 12,
+   "error": null,
+   "capturedDb": -9.1,
+   "heardDb": -9.1
+  },
+  {
+   "rate": 16,
+   "actual": 16,
+   "error": null,
+   "capturedDb": -9.1,
+   "heardDb": -9.1
+  },
+  {
+   "rate": 1,
+   "actual": 1,
+   "error": null,
+   "capturedDb": -9,
+   "heardDb": -9
+  }
+ ]
+}

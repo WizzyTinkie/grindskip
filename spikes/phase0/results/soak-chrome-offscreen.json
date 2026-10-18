@@ -1,0 +1,11 @@
+{
+ "browser": "chrome",
+ "target": "offscreen",
+ "sent": 11249,
+ "replies": 11249,
+ "errors": 0,
+ "disconnects": [],
+ "maxReplyGapMs": 35,
+ "lastError": null,
+ "wallSec": 360.0003000000007
+}

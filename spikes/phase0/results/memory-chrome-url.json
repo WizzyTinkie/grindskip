@@ -1,0 +1,31 @@
+{
+ "browser": "chrome",
+ "wasmLoad": "url",
+ "pageMB": 267.7,
+ "modelLoadedMB": 99.9,
+ "captureMB": 2.4,
+ "wasmHeapMB": null,
+ "initMs": 201,
+ "final": [
+  {
+   "pid": 211876,
+   "kb": 130795,
+   "type": ""
+  },
+  {
+   "pid": 211775,
+   "kb": 89689,
+   "type": ""
+  },
+  {
+   "pid": 211809,
+   "kb": 31170,
+   "type": ""
+  },
+  {
+   "pid": 211808,
+   "kb": 26945,
+   "type": ""
+  }
+ ]
+}

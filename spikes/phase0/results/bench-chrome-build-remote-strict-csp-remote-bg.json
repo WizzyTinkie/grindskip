@@ -1,0 +1,39 @@
+{
+ "url": "http://127.0.0.1:43751/pages/player.html?src=/media/bumpy_0-120.webm&csp=strict",
+ "ping": {
+  "env": {
+   "userAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/155.0.0.0 Safari/537.36",
+   "crossOriginIsolated": false,
+   "hasSharedArrayBuffer": false,
+   "hardwareConcurrency": 24,
+   "captureStream": "function",
+   "mozCaptureStream": "undefined"
+  },
+  "href": "http://127.0.0.1:43751/pages/player.html?src=/media/bumpy_0-120.webm&csp=strict"
+ },
+ "ok": true,
+ "target": "bg",
+ "hello": {
+  "id": 0,
+  "initMs": 182.40000000223517,
+  "where": "vad-bg",
+  "ua": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/155.0.0.0 Safari/537.36"
+ },
+ "rttMs": {
+  "n": 600,
+  "mean": 0.7396666666554907,
+  "p50": 0.6999999992549419,
+  "p95": 1,
+  "p99": 1.6000000014901161,
+  "max": 29.400000002235174
+ },
+ "remoteInferMs": {
+  "n": 600,
+  "mean": 0.4241666666728755,
+  "p50": 0.3999999985098839,
+  "p95": 0.5,
+  "p99": 0.8999999985098839,
+  "max": 28.799999997019768
+ },
+ "batchMsPerFrame": 0.7521666666679084
+}
