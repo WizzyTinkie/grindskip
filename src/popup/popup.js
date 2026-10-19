@@ -99,6 +99,12 @@ async function poll() {
   $('saved-total').textContent = duration(stats.savedSec + (s?.saved?.unsent ?? 0));
 }
 
+// The shortcut as set in the browser, which may differ from the suggested one
+api.commands.getAll().then((commands) => {
+  const key = commands.find((c) => c.name === 'toggle')?.shortcut;
+  if (key) $('enabled').closest('label').title = `Turn Grindskip on or off (${key})`;
+}, () => {});
+
 load(api.storage).then((s) => {
   settings = s;
   render();

@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
-import { DEFAULTS, KEY, RANGES, VERSION, load, migrate, save, watch } from '../src/shared/settings.js';
+import { DEFAULTS, KEY, RANGES, VERSION, load, migrate, save, toggle, watch } from '../src/shared/settings.js';
 
 test('nothing stored gives the defaults', () => {
   for (const stored of [undefined, null, 'x', 42, []]) assert.deepEqual(migrate(stored), DEFAULTS);
@@ -76,4 +76,13 @@ test('load, save and watch go through storage.local', async () => {
   stop();
   await save(storage, s);
   assert.equal(seen.length, 1);
+});
+
+test('toggle turns Grindskip on and off and keeps the other settings', async () => {
+  const storage = fakeStorage({ [KEY]: { playSpeed: 3 } });
+  assert.equal(await toggle(storage), true);
+  assert.equal(storage.data[KEY].enabled, true);
+  assert.equal(storage.data[KEY].playSpeed, 3);
+  assert.equal(await toggle(storage), false);
+  assert.equal(storage.data[KEY].enabled, false);
 });

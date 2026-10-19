@@ -119,7 +119,7 @@ Result: Grindskip works end to end in Chrome for Testing 155 and Firefox 157, on
    - **Overlay:** speech probability meter and state, built with DOM calls.
    - **Settings:** saved in `storage.local`, with defaults and migration.
 
-### Phase 3: Evaluation and tuning — done, except the check on real hardware
+### Phase 3: Evaluation and tuning — done, except the check on Windows and macOS
 
 Result: see [eval/REPORT.md](eval/REPORT.md). On the speech the model hears, at the default 2.5x, the controller meets the targets in both browsers: 96.8% (Chrome) and 95.7% (Firefox) of the commentary at talk speed, 98% of the rest at gameplay speed, no false slowdowns, a median delay of 0.10–0.26 s and 1.5% of a core for inference. With rewind on it reaches 98.7% and 97.4%, short of 99%. Against all of the auto-captions the share at talk speed is 92–93%, because some caption words in the gameplay stretches never register with the model at all. Settled along the way:
 
@@ -141,11 +141,11 @@ Result: see [eval/REPORT.md](eval/REPORT.md). On the speech the model hears, at 
   - non-commentary played at gameplay speed (%);
   - false slowdowns per minute;
   - CPU per frame.
-- **Final check:** in Chrome and Firefox on the real videos, including the speed-change lag on real output devices (Bluetooth, Windows, macOS).
+- **Final check:** in Chrome and Firefox on the real videos, including the speed-change lag on real output devices (Bluetooth, Windows, macOS). Done on Linux through a Bluetooth headset, with 1.001x: no audible difference. Windows and macOS are still to do.
 
 ### Phase 4: Polish and release
 
-- Keyboard shortcut to toggle.
+- Keyboard shortcut to toggle — done: Alt+Shift+G (Ctrl+Shift+G is *find previous* in both browsers). KeePassXC-Browser suggests the same key for its password generator, and in Firefox the two clash; the README says where to set another. It's a browser command handled by the background script, which flips the setting in storage. The toolbar button shows an "on" badge while Grindskip is on, so the shortcut's effect can be seen; the popup's switch shows the shortcut as set in the browser.
 - Icons (16, 32, 48 and 128 px), store screenshots and descriptions.
 - README with credits, and the website text.
 - Privacy statement: no data collected, nothing leaves the device.

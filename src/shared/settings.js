@@ -61,6 +61,13 @@ export function save(storage, settings) {
   return storage.local.set({ [KEY]: migrate(settings) });
 }
 
+// Turns Grindskip on or off (the keyboard shortcut); returns the new state.
+export async function toggle(storage) {
+  const s = await load(storage);
+  await save(storage, { ...s, enabled: !s.enabled });
+  return !s.enabled;
+}
+
 // Calls onChange(settings) whenever the stored settings change; returns a
 // function that stops listening.
 export function watch(storage, onChange) {

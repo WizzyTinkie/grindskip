@@ -1,15 +1,33 @@
 // The background script (Chrome's service worker, Firefox's event page):
-// adds the time saved that the tabs report to the stored total and, in
-// Chrome, opens the offscreen document when a content script can't compile
+// turns Grindskip on or off from the keyboard shortcut, shows an "on" badge
+// on the toolbar button while it's on, adds the time saved that the tabs
+// report to the stored total and, in Chrome, opens the offscreen document when a content script can't compile
 // WebAssembly under the page's CSP, and closes it when the document says
 // it's idle.
 import { ADD_SAVED } from '../shared/messages.js';
+import { load, toggle, watch } from '../shared/settings.js';
 import { createSaver } from '../shared/stats.js';
 import { CLOSE_OFFSCREEN, ENSURE_OFFSCREEN } from '../vad/remote.js';
 
 const api = globalThis.browser ?? globalThis.chrome;
 const addSaved = createSaver(api.storage);
 let creating = null;
+
+// The command's name in manifest/base.json
+const TOGGLE = 'toggle';
+const BADGE_COLOR = '#16a34a';
+
+function showEnabled(enabled) {
+  api.action.setBadgeBackgroundColor({ color: BADGE_COLOR }).catch(() => {});
+  api.action.setBadgeText({ text: enabled ? 'on' : '' }).catch(() => {});
+}
+
+api.commands.onCommand.addListener((command) => {
+  if (command === TOGGLE) toggle(api.storage).catch((e) => console.warn('Grindskip:', e));
+});
+// The popup and the shortcut both change the setting in storage
+watch(api.storage, (s) => showEnabled(s.enabled));
+load(api.storage).then((s) => showEnabled(s.enabled), () => {});
 
 async function ensureOffscreen() {
   if (await api.offscreen.hasDocument()) return;
