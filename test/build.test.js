@@ -27,6 +27,7 @@ function referencedFiles(m) {
     ...(m.background?.scripts ?? []),
     ...(m.action?.default_popup ? [m.action.default_popup] : []),
     ...Object.values(m.icons ?? {}),
+    ...Object.values(m.action?.default_icon ?? {}),
   ];
 }
 

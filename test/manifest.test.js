@@ -38,6 +38,14 @@ test('both have a popup', () => {
   }
 });
 
+test('both have the icon in every size, for the toolbar too', () => {
+  for (const browser of ['chrome', 'firefox']) {
+    const m = manifestFor(browser, root);
+    assert.deepEqual(Object.keys(m.icons), ['16', '32', '48', '128'], browser);
+    assert.deepEqual(Object.keys(m.action.default_icon), ['16', '32'], browser);
+  }
+});
+
 test('both have the shortcut to turn Grindskip on or off', () => {
   for (const browser of ['chrome', 'firefox']) {
     const m = manifestFor(browser, root);
