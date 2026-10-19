@@ -7,6 +7,12 @@
     "default_popup": "popup.html",
     "default_title": "Grindskip"
   },
+  "commands": {
+    "toggle": {
+      "suggested_key": { "default": "Alt+Shift+G" },
+      "description": "Turn Grindskip on or off"
+    }
+  },
   "content_scripts": [
     {
       "matches": ["<all_urls>"],

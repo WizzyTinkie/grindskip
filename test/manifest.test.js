@@ -38,6 +38,15 @@ test('both have a popup', () => {
   }
 });
 
+test('both have the shortcut to turn Grindskip on or off', () => {
+  for (const browser of ['chrome', 'firefox']) {
+    const m = manifestFor(browser, root);
+    assert.equal(m.commands.toggle.suggested_key.default, 'Alt+Shift+G', browser);
+    // The background script handles it
+    assert.ok(m.background, browser);
+  }
+});
+
 test('Firefox gets a fixed add-on ID, requires version 149 and has an event page', () => {
   const m = manifestFor('firefox', root);
   assert.equal(m.version, version);

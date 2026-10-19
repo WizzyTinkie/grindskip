@@ -31,7 +31,7 @@ To load the build by hand:
 
 ## Using it
 
-Click the Grindskip button in the toolbar and turn it on. On any page with a video, Grindskip then follows the largest one that plays with sound:
+Click the Grindskip button in the toolbar and turn it on, or press Alt+Shift+G. If it clashes with another add-on's shortcut (KeePassXC-Browser uses it for its password generator), set another in `chrome://extensions/shortcuts`, or in Firefox under *Manage Extension Shortcuts* in `about:addons`. The button shows an "on" badge while Grindskip is on. On any page with a video, Grindskip then follows the largest one that plays with sound:
 
 | Setting | Default | What it does |
 |---|---|---|
