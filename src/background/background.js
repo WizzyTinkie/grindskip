@@ -1,6 +1,6 @@
 // The background script (Chrome's service worker, Firefox's event page):
-// turns Grindskip on or off from the keyboard shortcut, shows an "on" badge
-// on the toolbar button while it's on, adds the time saved that the tabs
+// turns Grindskip on or off from the keyboard shortcut, shows whether it's
+// on with a green or gray toolbar icon, adds the time saved that the tabs
 // report to the stored total and, in Chrome, opens the offscreen document when a content script can't compile
 // WebAssembly under the page's CSP, and closes it when the document says
 // it's idle.
@@ -15,11 +15,10 @@ let creating = null;
 
 // The command's name in manifest/base.json
 const TOGGLE = 'toggle';
-const BADGE_COLOR = '#16a34a';
-
+// The manifest's default icon is the gray one, as Grindskip starts off
 function showEnabled(enabled) {
-  api.action.setBadgeBackgroundColor({ color: BADGE_COLOR }).catch(() => {});
-  api.action.setBadgeText({ text: enabled ? 'on' : '' }).catch(() => {});
+  const name = enabled ? 'icon' : 'icon-off';
+  api.action.setIcon({ path: { 16: `${name}-16.png`, 32: `${name}-32.png` } }).catch(() => {});
 }
 
 api.commands.onCommand.addListener((command) => {

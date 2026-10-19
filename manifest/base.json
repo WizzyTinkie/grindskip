@@ -13,8 +13,8 @@
     "default_popup": "popup.html",
     "default_title": "Grindskip",
     "default_icon": {
-      "16": "icon-16.png",
-      "32": "icon-32.png"
+      "16": "icon-off-16.png",
+      "32": "icon-off-32.png"
     }
   },
   "commands": {

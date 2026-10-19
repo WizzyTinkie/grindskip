@@ -28,6 +28,8 @@ function referencedFiles(m) {
     ...(m.action?.default_popup ? [m.action.default_popup] : []),
     ...Object.values(m.icons ?? {}),
     ...Object.values(m.action?.default_icon ?? {}),
+    // The green toolbar icon the background script switches to
+    ...Object.values(m.action?.default_icon ?? {}).map((f) => f.replace('icon-off-', 'icon-')),
   ];
 }
 
