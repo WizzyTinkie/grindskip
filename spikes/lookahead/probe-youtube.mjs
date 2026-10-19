@@ -8,7 +8,7 @@
 //
 // A consent page is answered with "Reject all". A bot check stops the run.
 //
-// Usage: node spikes/lookahead/probe-youtube.mjs chrome|firefox [--video ID] [--sec 20]
+// Usage: node spikes/lookahead/probe-youtube.mjs chrome|firefox [--video ID] [--sec 20] [--seek T] [--nohook]
 import { mkdirSync, writeFileSync } from 'node:fs';
 import { createRequire } from 'node:module';
 import { join } from 'node:path';
@@ -22,6 +22,8 @@ const opt = (k, d) => {
 };
 const videoId = opt('--video', 'BFG1Q7zpNtE');
 const sec = +opt('--sec', 20);
+const seek = opt('--seek', null);
+const noHook = rest.includes('--nohook');
 const OUT = join(import.meta.dirname, 'results');
 const KEEP_APPENDS = 4;
 
@@ -70,7 +72,7 @@ const out = { browser: browserName, version: await browser.version(), videoId };
 try {
   const page = await browser.newPage();
   await page.setViewport({ width: 1280, height: 900 });
-  await page.evaluateOnNewDocument(hook, KEEP_APPENDS);
+  if (!noHook) await page.evaluateOnNewDocument(hook, KEEP_APPENDS);
   await page.goto(`https://www.youtube.com/watch?v=${videoId}`, { waitUntil: 'domcontentloaded' });
   const rejected = await page.waitForFunction(() => {
     const b = [...document.querySelectorAll('button')].find((x) => /^\s*reject all\s*$/i.test(x.textContent));
@@ -91,9 +93,10 @@ try {
   // reaches beyond it
   out.samples = [];
   for (let s = 0; s < sec; s++) {
+    if (seek && s === Math.floor(sec / 2)) await page.evaluate((t) => document.querySelector('#movie_player').seekTo(t, true), +seek);
     out.samples.push(await page.evaluate((sel) => {
       const v = document.querySelector(sel);
-      const ahead = window.__laBuffers.map((sb) => {
+      const ahead = (window.__laBuffers ?? []).map((sb) => {
         try {
           const r = sb.buffered;
           for (let i = 0; i < r.length; i++) if (r.start(i) <= v.currentTime + 0.1 && r.end(i) > v.currentTime) return +(r.end(i) - v.currentTime).toFixed(1);
@@ -102,11 +105,11 @@ try {
           return null;   // removed from its MediaSource
         }
       });
-      return { t: +v.currentTime.toFixed(1), rate: v.playbackRate, ad: !!document.querySelector('.ad-showing'), src: v.currentSrc.slice(0, 5), ahead };
+      return { t: +v.currentTime.toFixed(1), paused: v.paused, ready: v.readyState, rate: v.playbackRate, ad: !!document.querySelector('.ad-showing'), src: v.currentSrc.slice(0, 5), ahead };
     }, VIDEO));
     await sleep(1000);
   }
-  const log = await page.evaluate(() => window.__la);
+  const log = await page.evaluate(() => window.__la ?? { appends: [], buffers: [] });
   out.workerMse = log.workerMse;
   out.managedMediaSource = log.managed;
   out.mediaSources = log.sources;
@@ -115,7 +118,7 @@ try {
     return { mime: b.mime, appends: a.length, bytes: a.reduce((s, x) => s + x.n, 0), offsets: [...new Set(a.map((x) => x.offset))] };
   });
   // The kept audio appends, as base64 to get them out of the page
-  const kept = await page.evaluate(() => window.__laBytes.map((b) => {
+  const kept = await page.evaluate(() => (window.__laBytes ?? []).map((b) => {
     let s = '';
     for (let i = 0; i < b.length; i += 0x8000) s += String.fromCharCode(...b.subarray(i, i + 0x8000));
     return btoa(s);

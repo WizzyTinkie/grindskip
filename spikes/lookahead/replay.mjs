@@ -11,6 +11,8 @@
 import { readFileSync } from 'node:fs';
 import { FRAME_SEC, PARAMS } from '../../src/controller/controller.js';
 import { DEFAULTS } from '../../src/shared/settings.js';
+import { createSchedule } from '../../src/lookahead/schedule.js';
+import { createTimeline } from '../../src/lookahead/timeline.js';
 import { CLIPS } from '../../eval/lib/clips.mjs';
 import { labelsFor } from '../../eval/lib/labels.mjs';
 import { combine, score, simulate, source } from '../../eval/lib/simulate.js';
@@ -93,6 +95,38 @@ function play(talk, settings, lead, { start, end }, lagFrames = 2) {
   return frames;
 }
 
+// The extension's scheduler (src/lookahead/schedule.js) on a timeline of
+// the 1x probabilities, played the same way
+function playScheduled(one, settings, { start, end }, lagFrames = 2) {
+  // Back to back from the first frame, as decoded audio would be: the
+  // recording stamps all the frames of one poll with the same media time
+  const tl = createTimeline();
+  const first = one.media[0] - FRAME_SEC;
+  for (let k = 0; k < one.media.length; k++) tl.set(first + k * FRAME_SEC, one.p[k]);
+  const sched = createSchedule(tl, settings);
+  sched.reset(start);
+  const frames = [];
+  let media = start;
+  let playing = settings.talkSpeed;
+  let pending = null;
+  let last = 'talk';
+  while (media <= end) {
+    // In the clip's last second the analysis can't reach far enough ahead;
+    // a real video goes on, so keep the last decision there
+    const at = sched.at(media) ?? (media > end - 1 ? last : 'talk');
+    last = at;
+    const want = at === 'gameplay' ? settings.playSpeed : settings.talkSpeed;
+    frames.push({ media, speed: playing, state: want === settings.talkSpeed ? 'speech' : 'gameplay', rewindTo: null });
+    media += FRAME_SEC * playing;
+    if (want !== (pending?.speed ?? playing)) pending = { speed: want, in: lagFrames };
+    if (pending && pending.in-- <= 0) {
+      playing = pending.speed;
+      pending = null;
+    }
+  }
+  return frames;
+}
+
 const data = Object.fromEntries(browsers.map((b) => [b, Object.fromEntries(CLIPS.map((c) => [c.name, { 1: load(b, c.name, 1) }]))]));
 for (const b of browsers) for (const c of CLIPS) for (const s of plays) data[b][c.name][s] = load(b, c.name, s);
 const all = Object.fromEntries(CLIPS.map((c) => [c.name, labelsFor(c, EVAL)]));
@@ -136,6 +170,10 @@ for (const speed of plays) {
   };
   row('live (today)', (b, c) => simulate(data[b][c.name], settings, PARAMS));
   row('live, rewind on', (b, c) => simulate(data[b][c.name], { ...settings, rewind: true }, PARAMS));
+  row('look-ahead, the extension\'s scheduler', (b, c) => {
+    const srcs = data[b][c.name];
+    return playScheduled(srcs[1], settings, { start: Math.max(srcs[1].start, srcs[speed].start), end: Math.min(srcs[1].end, srcs[speed].end) });
+  });
   for (const n of minFrames) {
     for (const lead of leads) {
       row(`look-ahead, ${n} frame${n > 1 ? 's' : ''}, ${lead} s early`, (b, c) => {

@@ -42,6 +42,8 @@ node record.mjs chrome
 
 This plays every clip at 1x, 2x, 2.5x, 3x and 4x (both of Grindskip's speeds set to the same value) into a temporary null sink, so nothing comes out of the speakers, and writes `recordings/<browser>/<clip>-<speed>x.json`: the 16 kHz audio the extension analysed, the browser's speech probabilities, the media times and the inference times, frame by frame. `--clips`, `--speeds` and `--jobs` (parallel browsers, default 3) narrow it down; `--csp strict` records on a page whose CSP makes Chrome use the offscreen document. Both browsers take about 25 minutes in all.
 
+`pages/mse.html?src=…` plays a clip through Media Source Extensions instead, the way YouTube does, so that Grindskip looks ahead; `spikes/lookahead/check-local.mjs` uses it.
+
 A debug recording saved from the popup has the same format, so a session from real use can be inspected the same way.
 
 ## Scoring and tuning

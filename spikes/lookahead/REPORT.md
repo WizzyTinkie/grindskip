@@ -49,6 +49,8 @@ So the decoded audio is as good as the captured audio for Silero, and its timest
 
 ## Open for the implementation
 
+Since implemented, as described in PLAN.md (Later: earlier speech detection); `check-youtube.mjs` and `check-local.mjs` check it in the extension. What was open:
+
 - **Extension wiring:** a `world: "MAIN"` content script at `document_start` with the hooks (check that it runs before YouTube's scripts in both browsers, as Puppeteer's did), handing copies of the audio appends to the isolated content script (a `CustomEvent` or `postMessage`). The page can see and spoof these messages; the worst it can do is mislead Grindskip on that page. Store reviewers will look at the main-world script.
 - **Which video:** map each `MediaSource` to its `<video>` (hook `URL.createObjectURL`, match `currentSrc`), so ads and hover previews don't mix in.
 - **Keeping in sync:** seeks (new ranges appended, sometimes twice), `SourceBuffer.remove`, a new init segment when the audio quality changes, ads. Reset the model state where timestamps jump; keep the schedule by media time.
