@@ -50,7 +50,7 @@ try {
     if (samples.length % 20 === 0) {
       const st = await evalCmd(page, 'status');
       modes.add(`${st.mode} (${st.where})`);
-      if (samples.length % 100 === 0) console.log(`t=${s.t.toFixed(1)} rate=${s.rate} mode=${st.mode} state=${st.state} ahead=${st.lookahead?.ahead} analysed=${st.lookahead?.analysed} decodedUntil=${st.lookahead?.decodedUntil?.toFixed(1)} counts=${JSON.stringify(st.lookahead?.counts)} error=${st.lookahead?.error} note=${st.note}`);
+      if (samples.length % 100 === 0) console.log(`t=${s.t.toFixed(1)} rate=${s.rate} mode=${st.mode} state=${st.state} ahead=${st.lookahead?.ahead} analysed=${st.lookahead?.analysed} decodedUntil=${st.lookahead?.decodedUntil?.toFixed(1)} lag=${st.lookahead?.lagMs}/${st.lookahead?.lastLagMs} lead=${st.lookahead?.leadMs} error=${st.lookahead?.error} note=${st.note}`);
     }
     if (!seeked && seekAfter !== null && Date.now() - t0 > seekAfter * 1000) {
       seeked = true;

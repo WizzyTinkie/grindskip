@@ -10,8 +10,10 @@
 // - the run must last MIN_FRAMES (0.26 s), which filters out short sounds
 //   that aren't speech, but talk speed starts at the run's first frame, so
 //   the longer minimum costs no delay;
-// - playback slows down LEAD_SEC (wall time) before that, so the speed
-//   change, which takes up to 75 ms to be heard, lands before the speech.
+// - playback slows down a lead (wall time) before that, so that the speed
+//   change, which takes a while to take effect, lands before the speech:
+//   leadSec, or more where the change is measured to take longer
+//   (lag.js).
 import { FRAME_SEC, PARAMS } from '../controller/controller.js';
 
 export const LOOKAHEAD = Object.freeze({
@@ -71,8 +73,9 @@ export function createSchedule(timeline, settings, params = PARAMS, look = LOOKA
     reset,
     configure(next) { s = next; },
     // What to play at media time t: 'talk', 'gameplay', or null when the
-    // analysis doesn't reach far enough beyond t to know
-    at(t) {
+    // analysis doesn't reach far enough beyond t to know. leadSec: how far
+    // ahead of speech to slow down, in wall time
+    at(t, leadSec = look.leadSec) {
       if (k === null || t < origin || t >= k * FRAME_SEC + 1) {
         // Not started, or t is outside what the schedule has covered (a
         // seek it wasn't told about)
@@ -83,7 +86,7 @@ export function createSchedule(timeline, settings, params = PARAMS, look = LOOKA
         step(timeline.get(k));
         k++;
       }
-      const lead = look.leadSec * s.playSpeed;
+      const lead = leadSec * s.playSpeed;
       // The run that would start speech must be known too
       if (k * FRAME_SEC < t + lead + look.minFrames * FRAME_SEC) return null;
       if (state !== 'gameplay' && from <= t + lead) return 'talk';

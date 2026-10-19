@@ -6,7 +6,8 @@
 // video plays.
 import { FRAME_SEC, PARAMS, createController, startThreshold } from '../controller/controller.js';
 import { createFeed } from '../lookahead/feed.js';
-import { createSchedule } from '../lookahead/schedule.js';
+import { createLagMeter } from '../lookahead/lag.js';
+import { LOOKAHEAD, createSchedule } from '../lookahead/schedule.js';
 import { ADD_SAVED, RECORD_START, RECORD_STOP, RESUME, STATUS } from '../shared/messages.js';
 import { DEFAULTS, load, watch } from '../shared/settings.js';
 import { canCompileWasm, loadModel } from '../vad/load.js';
@@ -30,12 +31,22 @@ const TICK_MS = 30;
 // Look-ahead keeps this much of the analysis behind the playing position,
 // for seeking back
 const KEEP_BEHIND_SEC = 120;
+// On top of the measured time a speed change takes, for the tick and noise
+const LAG_MARGIN_SEC = 0.06;
 
 let settings = DEFAULTS;
 let stopTracking = null;
 let follow = null;      // the pipeline for the followed video
 let vad = null;         // promise of the page's speech detector
 let feed = null;        // the look-ahead feed from the page hook, once on
+// How long a speed change takes to take effect here (the browser and the
+// output device), for look-ahead's lead; kept across videos, and in storage
+// across pages, so the first speech on the next page is caught too
+const LAG_KEY = 'lookaheadLag';
+const lag = createLagMeter(() => {
+  api.storage.local.set({ [LAG_KEY]: lag.estimate }).catch(() => {});
+});
+api.storage.local.get(LAG_KEY).then((d) => lag.seed(d[LAG_KEY]), () => {});
 let overlay = null;
 let recorder = null;    // the debug recording, while one runs
 
@@ -226,21 +237,26 @@ function createPipeline(video) {
     // Muted videos are left alone, as when listening live
     if (!schedule || !isPlaying(video) || video.muted) return;
     const t = video.currentTime;
+    const now = performance.now() / 1000;
+    lag.sample(now, t);
     if (analysis.timeline.size > 2 * KEEP_BEHIND_SEC / FRAME_SEC) analysis.timeline.prune(t - KEEP_BEHIND_SEC);
-    const at = schedule.at(t);
+    const at = schedule.at(t, leadSec());
     const p = analysis.timeline.at(t) ?? null;
     const start = startThreshold(1, settings.sensitivity);
     const state = at === 'gameplay' ? 'gameplay' : p !== null && p >= start ? 'speech' : 'wait';
     // Talk speed until the analysis reaches far enough ahead to know
     const rate = at === 'gameplay' ? settings.playSpeed : settings.talkSpeed;
     last = { p, start, end: PARAMS.end, state, speed: rate, known: at !== null };
+    const before = video.playbackRate;
     speed.set(rate);
+    if (video.playbackRate !== before) lag.changed(now, t, before, video.playbackRate);
     show();
   }
   const ticker = setInterval(tick, TICK_MS);
 
   const onSeeking = () => {
     schedule?.reset(video.currentTime);
+    lag.reset();
     const rewind = selfSeek;
     selfSeek = false;
     if (!rewind) controller.reset({ seek: true });
@@ -262,11 +278,13 @@ function createPipeline(video) {
   for (const [name, fn] of Object.entries(events)) video.addEventListener(name, fn);
   begin();
 
-  // How far the look-ahead analysis reaches beyond the playing position
+  // How far the look-ahead analysis reaches beyond the playing position,
+  // and how long speed changes take to take effect
   function lookaheadStatus() {
     if (!feed) return null;
     const a = feed.analysis;
-    return { ...feed.status(), ahead: a ? +a.timeline.ahead(video.currentTime).toFixed(2) : 0 };
+    const ms = (x) => (x === null ? null : Math.round(x * 1000));
+    return { ...feed.status(), ahead: a ? +a.timeline.ahead(video.currentTime).toFixed(2) : 0, lagMs: ms(lag.estimate), lastLagMs: ms(lag.last), leadMs: ms(leadSec()) };
   }
 
   function note() {
@@ -334,6 +352,12 @@ function reportSaved(saved) {
   } catch {
     // The extension was reloaded or removed; this script is left over
   }
+}
+
+// How long before speech look-ahead slows down, in wall time: enough for
+// the speed change to take effect
+function leadSec() {
+  return Math.max(LOOKAHEAD.leadSec, (lag.estimate ?? 0) + LAG_MARGIN_SEC);
 }
 
 function followVideo(video) {
