@@ -2,6 +2,7 @@
 // scripts follow storage), and the state of the active tab's video.
 import { RECORD_START, RECORD_STOP, RESUME, STATUS } from '../shared/messages.js';
 import { DEFAULTS, RANGES, load, migrate, save } from '../shared/settings.js';
+import { duration, load as loadStats } from '../shared/stats.js';
 
 const api = globalThis.browser ?? globalThis.chrome;
 const POLL_MS = 400;
@@ -76,6 +77,7 @@ function showStatus(s) {
   else state = note ? '–' : 'Waiting for the video to play';
   $('state').textContent = state;
   $('speed').textContent = s?.video && Number.isFinite(s.speed) ? `${s.speed.toFixed(2)}x` : '–';
+  $('saved-video').textContent = s?.video && s.saved ? duration(s.saved.video) : '–';
   $('note').textContent = note ?? '';
   $('note').hidden = !note;
   $('resume').hidden = !s?.overridden;
@@ -90,7 +92,11 @@ function clock(sec) {
 }
 
 async function poll() {
-  showStatus(await send({ type: STATUS }));
+  const s = await send({ type: STATUS });
+  showStatus(s);
+  // The stored total, plus what the tab hasn't reported yet
+  const stats = await loadStats(api.storage);
+  $('saved-total').textContent = duration(stats.savedSec + (s?.saved?.unsent ?? 0));
 }
 
 load(api.storage).then((s) => {

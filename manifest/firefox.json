@@ -1,4 +1,7 @@
 {
+  "background": {
+    "scripts": ["background.js"]
+  },
   "browser_specific_settings": {
     "gecko": {
       "id": "grindskip@wizzytinkie.github.io",

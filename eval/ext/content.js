@@ -8,12 +8,17 @@
 // JSON string { id, ok, result | error }.
 import { control } from '../../src/content/main.js';
 import { DEFAULTS } from '../../src/shared/settings.js';
+import { load as loadStats } from '../../src/shared/stats.js';
+
+const api = globalThis.browser ?? globalThis.chrome;
 
 const handlers = {
   // Settings as given, without migrate(): tests may set both speeds to the
   // same value to hold the video at a fixed speed
   settings: (s) => control.apply({ ...DEFAULTS, ...s }),
   status: () => control.status(),
+  // The stored total of time saved (shared/stats.js)
+  stats: () => loadStats(api.storage),
   recordStart: () => control.startRecording(),
   recordStop: () => control.stopRecording(),
   recordSave: () => control.saveRecording(),

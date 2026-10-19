@@ -47,13 +47,13 @@ Phase 0's measurements behind these choices are in [spikes/phase0/REPORT.md](spi
 
 ```
 src/
-  content/      video.js, capture.js, speed.js, overlay.js, recorder.js (debug recording), main.js
+  content/      video.js, capture.js, speed.js, saved.js (time saved), overlay.js, recorder.js (debug recording), main.js
   vad/          silero.js (model and per-stream state), resample.js, load.js (loads it in an extension context), remote.js (port client for the fallback)
-  background/   background.js (Chrome only: the service worker that opens the offscreen document)
+  background/   background.js (adds the tabs' time saved to the total; in Chrome also opens the offscreen document)
   offscreen/    offscreen.html, offscreen.js (Chrome only: serves the model over a port)
   controller/   controller.js (pure decision logic)
   popup/        popup.html, popup.js, popup.css
-  shared/       settings.js (defaults, storage, migration), messages.js (popup to content script)
+  shared/       settings.js (defaults, storage, migration), stats.js (the total time saved), messages.js
 assets/         icons, silero_vad.onnx (v6.2, 16 kHz export)
 manifest/       base.json, chrome.json, firefox.json
 scripts/        build.mjs (esbuild, copies wasm and model, writes dist/<browser>), manifest.mjs (merges the manifests)
@@ -128,6 +128,8 @@ Result: see [eval/REPORT.md](eval/REPORT.md). On the speech the model hears, at 
 - Recordings are made through the extension itself: an evaluation build (`node scripts/build.mjs --eval`) adds a hook to drive the content script from the page, which also gets around Firefox's WebDriver BiDi not opening extension pages.
 - New defaults from the sweep: start threshold 0.9 at gameplay speed (was 0.8) with 2 frames of minimum speech (was 3). At 4x this cuts false slowdowns from 8 to 3, and it is no worse at 2–3x. Rewind goes 0.5 s further back than the detected onset (was 0.25 s). The talk-speed start threshold (0.5) and the end threshold (0.35) made no measurable difference and stay.
 - The popup's debug recording saves to a file through a link in the page, which worked in both browsers.
+- The popup shows the time saved, on the current video and in total, compared with 1x: media time played at speed r saves (1 − 1/r) of it, a rewind costs the media it jumps back over, and seeks and speeds set by the user don't count. The tabs report every 10 s to the background script, which alone writes the total to `storage.local`, so tabs can't overwrite each other's additions; Firefox now has an event page for this.
+- Speeding up from exactly 1x clicked in both browsers: at 1x they skip their time-stretcher, and starting it again on the switch is audible. Talk speed 1x is therefore played as 1.001x (`NORMAL_RATE` in `speed.js`), which keeps the time-stretcher running, so a speed-up only changes its rate. Choosing exactly 1x in the player's menu still doesn't count as a speed change by the user.
 
 
 - **Test set:** 3–5 real segments, including the RISEN video (music intro, then continuous commentary) and long stretches of gameplay with little talking, where the false slowdowns happen. Speech times come from the auto-generated captions, corrected by hand where needed. Phase 0's three clips (`spikes/phase0/lib/clips.mjs`) are a starting point.
@@ -154,6 +156,15 @@ Result: see [eval/REPORT.md](eval/REPORT.md). On the speech the model hears, at 
 ### Phase 5 (optional): Fine-tuning
 
 If music or sound effects still trigger speech, fine-tune Silero on labelled gameplay audio with the `tuning` scripts in the Silero VAD repo. They need PyTorch and speech start and end times accurate to about 30 ms.
+
+### Later: earlier speech detection
+
+Grindskip hears speech only once it plays, so the first syllable of each remark is always heard at gameplay speed. In Phase 3 the switch came a median 0.10 s (Chrome) and 0.26 s (Firefox) after the onset, made up of the minimum speech run (2 frames, 64 ms), the analyser poll (30 ms), inference, and the speed change reaching the speakers (30–75 ms in Chrome, 10–35 ms in Firefox). Ways to cut it, roughly from most to least gain:
+
+1. **Look ahead.** Analyse the audio before it plays, so the switch lands on the onset. On YouTube (Media Source Extensions) that could mean decoding the audio appended to the `SourceBuffer` with WebCodecs' `AudioDecoder`. It's site-specific, has to follow seeks and quality changes, and costs more CPU.
+2. **React sooner to the same audio.** A single frame above a stricter threshold, or a trigger on a fast rise in probability. This trades against false slowdowns, so measure it with the evaluation sweep (`eval/run.mjs`).
+3. **Find out why Firefox is slower.** Its median delay is more than twice Chrome's, though its speed change reaches the audio sooner.
+4. **Lean on rewind.** It already gets 98.7% (Chrome) and 97.4% (Firefox) of the speech heard at talk speed. A shorter jump, just back to the onset, might make it pleasant enough to turn on by default.
 
 ## Targets (measured on the test set)
 

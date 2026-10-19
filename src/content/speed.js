@@ -8,6 +8,10 @@ const MIN_RATE = 0.25;
 // After a new source loads, players set their own speed (YouTube restores
 // the one chosen in its menu); changes in this window aren't the user's.
 const LOAD_GRACE_MS = 1500;
+// Normal speed is played as this instead. At exactly 1x the browsers skip
+// their time-stretcher, and starting it again on a speed-up clicks; just off
+// 1x it keeps running, and a speed-up only changes its rate.
+export const NORMAL_RATE = 1.001;
 
 // onOverride(rate) is called when someone else sets the speed. From then on
 // set() does nothing until resume().
@@ -18,6 +22,8 @@ export function controlSpeed(video, onOverride) {
 
   const onRateChange = () => {
     if (overridden || ours === null) return;
+    // Loose enough that exactly 1x, chosen in a player's menu while ours is
+    // NORMAL_RATE, isn't a change: it wasn't when ours was exactly 1x either
     if (Math.abs(video.playbackRate - ours) < 0.005) return;
     if (performance.now() < graceUntil) {
       video.playbackRate = ours;
@@ -36,7 +42,8 @@ export function controlSpeed(video, onOverride) {
     get overridden() { return overridden; },
     set(rate) {
       if (overridden) return;
-      const r = Math.round(Math.min(MAX_RATE, Math.max(MIN_RATE, rate)) * 100) / 100;
+      let r = Math.round(Math.min(MAX_RATE, Math.max(MIN_RATE, rate)) * 100) / 100;
+      if (r === 1) r = NORMAL_RATE;
       ours = r;
       if (video.playbackRate !== r) video.playbackRate = r;
     },
