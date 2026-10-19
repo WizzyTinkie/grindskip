@@ -23,7 +23,9 @@ export const PARAMS = Object.freeze({
   highRate: 2,
   end: 0.35,                 // end threshold
   minHysteresis: 0.05,       // the end threshold stays at least this far below the start
-  minSpeechFrames: 2,        // frames in a row at gameplay speed before switching (64 ms)
+  minSpeechFrames: 1,        // frames in a row at gameplay speed before switching, below fastRate (32 ms)...
+  minSpeechFramesFast: 2,    // ...and from fastRate up (64 ms), where game sound passes for speech more often
+  fastRate: 3,
   sensitivityStep: 0.05,     // start-threshold change per step of the sensitivity setting
   maxStart: 0.98,
   rewindMinGameplaySec: 3,   // rewind only after this long at gameplay speed...
@@ -39,6 +41,14 @@ export function startThreshold(rate, sensitivity = 0, params = PARAMS) {
   const f = Math.min(1, Math.max(0, (rate - lowRate) / (highRate - lowRate)));
   const t = startLow + f * (startHigh - startLow) - sensitivity * params.sensitivityStep;
   return Math.min(params.maxStart, Math.max(params.end + params.minHysteresis, t));
+}
+
+// Frames in a row at or above the start threshold that count as speech, for
+// audio playing at `rate`. One frame switches 32 ms sooner, but from 3x up
+// it lets through game sound (Phase 3 replay: 6 false slowdowns instead of
+// 2 at 4x, 1 instead of 0 at 3x).
+export function minSpeechFrames(rate, params = PARAMS) {
+  return rate >= params.fastRate ? params.minSpeechFramesFast : params.minSpeechFrames;
 }
 
 // settings: { talkSpeed, playSpeed, waitSec, sensitivity, rewind } (see
@@ -104,7 +114,7 @@ export function createController(settings, params = PARAMS) {
         } else {
           run = 0;
         }
-        if (run >= params.minSpeechFrames) {
+        if (run >= minSpeechFrames(fast, params)) {
           rewindTo = rewindTarget(mediaTime);
           state = 'speech';
         }
