@@ -54,7 +54,7 @@ src/
   controller/   controller.js (pure decision logic)
   popup/        popup.html, popup.js, popup.css
   shared/       settings.js (defaults, storage, migration), stats.js (the total time saved), messages.js
-assets/         icons, silero_vad.onnx (v6.2, 16 kHz export)
+assets/         icons/ (icon.svg and its PNGs), silero_vad.onnx (v6.2, 16 kHz export)
 manifest/       base.json, chrome.json, firefox.json
 scripts/        build.mjs (esbuild, copies wasm and model, writes dist/<browser>), manifest.mjs (merges the manifests)
 test/           unit tests (Node's built-in test runner)
@@ -145,8 +145,9 @@ Result: see [eval/REPORT.md](eval/REPORT.md). On the speech the model hears, at 
 
 ### Phase 4: Polish and release
 
-- Keyboard shortcut to toggle — done: Alt+Shift+G (Ctrl+Shift+G is *find previous* in both browsers). KeePassXC-Browser suggests the same key for its password generator, and in Firefox the two clash; the README says where to set another. It's a browser command handled by the background script, which flips the setting in storage. The toolbar button shows an "on" badge while Grindskip is on, so the shortcut's effect can be seen; the popup's switch shows the shortcut as set in the browser.
-- Icons (16, 32, 48 and 128 px), store screenshots and descriptions.
+- Keyboard shortcut to toggle — done: Alt+Shift+G (Ctrl+Shift+G is *find previous* in both browsers). KeePassXC-Browser suggests the same key for its password generator, and in Firefox the two clash; the README says where to set another. It's a browser command handled by the background script, which flips the setting in storage. The toolbar icon is green while Grindskip is on and gray while it's off, so the shortcut's effect can be seen (a badge was tried first, but a green "on" on the green icon looked bad, and the browsers draw badges as they like); the popup's switch shows the shortcut as set in the browser.
+- Icons — done: a green speech bubble with white fast-forward arrows (the talking kept, the rest skipped), in the popup's green. `assets/icons/icon.svg` is the source; `node scripts/icons.mjs` renders the 16, 32, 48 and 128 px PNGs with `rsvg-convert`, plus gray 16 and 32 px ones for the toolbar while Grindskip is off, and they're committed so the build needs no SVG renderer.
+- Store screenshots and descriptions.
 - README with credits, and the website text.
 - Privacy statement: no data collected, nothing leaves the device.
 - Firefox Add-ons: fixed add-on ID; the source code and build instructions are submitted with each release, because the code is bundled.

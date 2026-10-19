@@ -36,6 +36,8 @@ const sharedFiles = {
   'popup.css': 'src/popup/popup.css',
   'ort-wasm-simd-threaded.wasm': 'node_modules/onnxruntime-web/dist/ort-wasm-simd-threaded.wasm',
   'silero_vad.onnx': 'assets/silero_vad.onnx',
+  ...Object.fromEntries([16, 32, 48, 128].map((s) => [`icon-${s}.png`, `assets/icons/icon-${s}.png`])),
+  ...Object.fromEntries([16, 32].map((s) => [`icon-off-${s}.png`, `assets/icons/icon-off-${s}.png`])),
 };
 
 async function buildAll(outRoot, { clean, evalBuild }) {

@@ -38,6 +38,15 @@ test('both have a popup', () => {
   }
 });
 
+test('both have the icon in every size, for the toolbar too', () => {
+  for (const browser of ['chrome', 'firefox']) {
+    const m = manifestFor(browser, root);
+    assert.deepEqual(Object.keys(m.icons), ['16', '32', '48', '128'], browser);
+    // Gray: Grindskip starts off, and the background script turns it green
+    assert.deepEqual(m.action.default_icon, { 16: 'icon-off-16.png', 32: 'icon-off-32.png' }, browser);
+  }
+});
+
 test('both have the shortcut to turn Grindskip on or off', () => {
   for (const browser of ['chrome', 'firefox']) {
     const m = manifestFor(browser, root);

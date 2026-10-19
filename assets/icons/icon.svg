@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128">
+  <!-- Grindskip: a speech bubble (the talking, kept) with fast-forward arrows (the rest, skipped) -->
+  <path d="M30 12h68a22 22 0 0 1 22 22v40a22 22 0 0 1-22 22H58l-28 24V96a22 22 0 0 1-22-22V34a22 22 0 0 1 22-22z" fill="#16a34a"/>
+  <path d="M34 32v44l30-22zM64 32v44l30-22z" fill="#fff"/>
+</svg>

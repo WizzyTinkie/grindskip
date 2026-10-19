@@ -31,7 +31,7 @@ To load the build by hand:
 
 ## Using it
 
-Click the Grindskip button in the toolbar and turn it on, or press Alt+Shift+G. If it clashes with another add-on's shortcut (KeePassXC-Browser uses it for its password generator), set another in `chrome://extensions/shortcuts`, or in Firefox under *Manage Extension Shortcuts* in `about:addons`. The button shows an "on" badge while Grindskip is on. On any page with a video, Grindskip then follows the largest one that plays with sound:
+Click the Grindskip button in the toolbar and turn it on, or press Alt+Shift+G. If it clashes with another add-on's shortcut (KeePassXC-Browser uses it for its password generator), set another in `chrome://extensions/shortcuts`, or in Firefox under *Manage Extension Shortcuts* in `about:addons`. The button's icon is green while Grindskip is on and gray while it's off. On any page with a video, Grindskip then follows the largest one that plays with sound:
 
 | Setting | Default | What it does |
 |---|---|---|
@@ -52,7 +52,7 @@ If it slows down or speeds up when it shouldn't, *Start a debug recording* in th
 
 - `src/`: the extension's code, bundled by esbuild: `content/` (video, capture, speed, time saved, overlay), `vad/` (Silero, resampler, offscreen client), `controller/` (the decisions), `popup/`, `shared/` (settings, time saved), `background/` (adds up the time saved; in Chrome, opens the offscreen document) and Chrome's `offscreen/`
 - `manifest/`: `base.json` plus the Chrome and Firefox additions, merged by the build
-- `assets/`: the Silero model (and later the icons)
+- `assets/`: the Silero model, and the icon (`icons/icon.svg`; `node scripts/icons.mjs` renders its PNGs with `rsvg-convert`)
 - `scripts/build.mjs`: the build
 - `test/`: unit tests; `test/fixtures/traces.json` holds speech probabilities recorded in Phase 0, for replaying the controller
 - `eval/`: Phase 3's evaluation: records test clips in the browsers and replays them through the controller to score and tune it (see [eval/README.md](eval/README.md) and [eval/REPORT.md](eval/REPORT.md))
