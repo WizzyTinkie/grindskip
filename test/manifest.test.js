@@ -38,14 +38,14 @@ test('both have a popup', () => {
   }
 });
 
-test('Firefox gets a fixed add-on ID and requires version 149', () => {
+test('Firefox gets a fixed add-on ID, requires version 149 and has an event page', () => {
   const m = manifestFor('firefox', root);
   assert.equal(m.version, version);
   assert.match(m.browser_specific_settings.gecko.id, /^[\w.-]+@[\w.-]+$/);
   assert.equal(m.browser_specific_settings.gecko.strict_min_version, '149.0');
   assert.deepEqual(m.browser_specific_settings.gecko.data_collection_permissions, { required: ['none'] });
   assert.ok(!m.permissions.includes('offscreen'));
-  assert.equal(m.background, undefined);
+  assert.deepEqual(m.background, { scripts: ['background.js'] });
 });
 
 test('both expose the ONNX Runtime WebAssembly and the model to the content script', () => {

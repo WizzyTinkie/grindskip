@@ -42,13 +42,15 @@ Click the Grindskip button in the toolbar and turn it on. On any page with a vid
 | Rewind on speech | off | after a stretch of gameplay, jumps back to where the talking started (at most 1.5 s) |
 | Show the speech meter | off | draws the speech probability, the state and the speed over the video |
 
+The popup also shows the time saved on the current video and in total, compared with watching at 1x. A rewind counts against it, and time played at a speed you set yourself doesn't count. The total is kept on your computer only.
+
 If you change the speed yourself, Grindskip leaves it alone on that video until you click *Change the speed again* in the popup, or the next video starts.
 
 If it slows down or speeds up when it shouldn't, *Start a debug recording* in the popup, play the part where it happens, and click *Stop and save*. That saves the audio Grindskip analysed and its decisions to a file in your downloads (at most 10 minutes). Nothing is sent anywhere; share the file only if you want to.
 
 ## Layout
 
-- `src/`: the extension's code, bundled by esbuild: `content/` (video, capture, speed, overlay), `vad/` (Silero, resampler, offscreen client), `controller/` (the decisions), `popup/`, `shared/` (settings), and Chrome's `background/` and `offscreen/`
+- `src/`: the extension's code, bundled by esbuild: `content/` (video, capture, speed, time saved, overlay), `vad/` (Silero, resampler, offscreen client), `controller/` (the decisions), `popup/`, `shared/` (settings, time saved), `background/` (adds up the time saved; in Chrome, opens the offscreen document) and Chrome's `offscreen/`
 - `manifest/`: `base.json` plus the Chrome and Firefox additions, merged by the build
 - `assets/`: the Silero model (and later the icons)
 - `scripts/build.mjs`: the build

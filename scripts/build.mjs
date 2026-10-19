@@ -18,10 +18,7 @@ const root = fileURLToPath(new URL('..', import.meta.url));
 // manifest/ refer to the output names.
 const targets = {
   chrome: {
-    scripts: {
-      'background.js': 'src/background/background.js',
-      'offscreen.js': 'src/offscreen/offscreen.js',
-    },
+    scripts: { 'offscreen.js': 'src/offscreen/offscreen.js' },
     files: { 'offscreen.html': 'src/offscreen/offscreen.html' },
   },
   firefox: {
@@ -30,6 +27,7 @@ const targets = {
   },
 };
 const sharedScripts = {
+  'background.js': 'src/background/background.js',
   'content.js': 'src/content/main.js',
   'popup.js': 'src/popup/popup.js',
 };

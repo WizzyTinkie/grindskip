@@ -1,9 +1,14 @@
-// Chrome's service worker: opens the offscreen document when a content
-// script can't compile WebAssembly under the page's CSP, and closes it when
-// the document says it's idle.
+// The background script (Chrome's service worker, Firefox's event page):
+// adds the time saved that the tabs report to the stored total and, in
+// Chrome, opens the offscreen document when a content script can't compile
+// WebAssembly under the page's CSP, and closes it when the document says
+// it's idle.
+import { ADD_SAVED } from '../shared/messages.js';
+import { createSaver } from '../shared/stats.js';
 import { CLOSE_OFFSCREEN, ENSURE_OFFSCREEN } from '../vad/remote.js';
 
-const api = globalThis.chrome;
+const api = globalThis.browser ?? globalThis.chrome;
+const addSaved = createSaver(api.storage);
 let creating = null;
 
 async function ensureOffscreen() {
@@ -19,6 +24,12 @@ async function ensureOffscreen() {
 }
 
 api.runtime.onMessage.addListener((msg, _sender, sendResponse) => {
+  if (msg?.type === ADD_SAVED) {
+    if (Number.isFinite(msg.seconds)) addSaved(msg.seconds);
+    return false;
+  }
+  // Only Chrome has the offscreen document
+  if (!api.offscreen) return false;
   if (msg?.type === ENSURE_OFFSCREEN) {
     ensureOffscreen().then(
       () => sendResponse({ ok: true }),

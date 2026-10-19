@@ -2,13 +2,14 @@
 // the speech detector on it and sets the playback speed. It stays idle (no
 // model, no capture) until Grindskip is on and an unmuted video plays.
 import { PARAMS, createController } from '../controller/controller.js';
-import { RECORD_START, RECORD_STOP, RESUME, STATUS } from '../shared/messages.js';
+import { ADD_SAVED, RECORD_START, RECORD_STOP, RESUME, STATUS } from '../shared/messages.js';
 import { DEFAULTS, load, watch } from '../shared/settings.js';
 import { canCompileWasm, loadModel } from '../vad/load.js';
 import { createRemoteVad } from '../vad/remote.js';
 import { startCapture } from './capture.js';
 import { createOverlay } from './overlay.js';
 import { createRecorder } from './recorder.js';
+import { countSaved } from './saved.js';
 import { controlSpeed } from './speed.js';
 import { trackVideo } from './video.js';
 
@@ -17,6 +18,8 @@ const api = globalThis.browser ?? globalThis.chrome;
 const MAX_QUEUE = 16;
 // Failed frames in a row before the status says so (1 s)
 const MAX_FAILURES = 31;
+// How often the time saved is added to the total
+const REPORT_SAVED_MS = 10000;
 
 let settings = DEFAULTS;
 let stopTracking = null;
@@ -70,6 +73,7 @@ function createPipeline(video) {
     recorder?.event('override', { rate });
     show();
   });
+  const saved = countSaved(video, () => !speed.overridden);
   let detector = null;
   let capture = null;
   let starting = false;
@@ -137,6 +141,7 @@ function createPipeline(video) {
     last = { p, ...r };
     speed.set(r.speed);
     if (r.rewindTo !== null && !speed.overridden) {
+      saved.rewound(video.currentTime - r.rewindTo);
       selfSeek = true;
       video.currentTime = r.rewindTo;
     }
@@ -162,6 +167,8 @@ function createPipeline(video) {
   const onLoadStart = () => {
     controller.reset();
     speed.resume();
+    reportSaved(saved);
+    saved.newVideo();
     last = null;
     restart('new source');
     show();
@@ -181,6 +188,7 @@ function createPipeline(video) {
 
   return {
     video,
+    saved,
     configure(s) { controller.configure(s); },
     resume() {
       speed.resume();
@@ -197,6 +205,7 @@ function createPipeline(video) {
         overridden: speed.overridden,
         where: detector?.where ?? null,
         note: note(),
+        saved: { video: saved.seconds, unsent: saved.unsent },
       };
     },
     stop() {
@@ -207,8 +216,22 @@ function createPipeline(video) {
       capture?.stop();
       speed.restore();
       speed.stop();
+      reportSaved(saved);
+      saved.stop();
     },
   };
+}
+
+// Adds the time saved since the last report to the total, through the
+// background script
+function reportSaved(saved) {
+  const seconds = saved?.take() ?? 0;
+  if (seconds === 0) return;
+  try {
+    api.runtime.sendMessage({ type: ADD_SAVED, seconds }).catch(() => {});
+  } catch {
+    // The extension was reloaded or removed; this script is left over
+  }
 }
 
 function followVideo(video) {
@@ -301,6 +324,13 @@ api.runtime.onMessage.addListener((msg, _sender, sendResponse) => {
 
 const ready = load(api.storage).then(apply);
 watch(api.storage, apply);
+const reportFollowed = () => reportSaved(follow?.saved);
+setInterval(reportFollowed, REPORT_SAVED_MS);
+// The page may be closing: report now rather than lose up to 10 s
+document.addEventListener('visibilitychange', () => {
+  if (document.visibilityState === 'hidden') reportFollowed();
+});
+window.addEventListener('pagehide', reportFollowed);
 
 // For the evaluation build (eval/ext), which drives this script from tests
 export const control = { ready, apply, status, startRecording, stopRecording, saveRecording };
