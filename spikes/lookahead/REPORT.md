@@ -56,3 +56,17 @@ Since implemented, as described in PLAN.md (Later: earlier speech detection); `c
 - **Keeping in sync:** seeks (new ranges appended, sometimes twice), `SourceBuffer.remove`, a new init segment when the audio quality changes, ads. Reset the model state where timestamps jump; keep the schedule by media time.
 - **AAC:** other videos or browsers may get `audio/mp4; codecs="mp4a.40.2"`, which needs an fMP4 demuxer. Until then, the live capture is the fallback, as for plain video files, encrypted media, and sites that append from a worker.
 - **The controller:** follow `currentTime` (every poll or `requestVideoFrameCallback`) against the schedule, switch `lead` early, and turn rewind off where look-ahead works.
+
+## Other sites: Twitch (`probe-site.mjs`, `check-site.mjs`)
+
+Look-ahead needs the audio appended in the page, as Opus in WebM. Twitch does neither, so Grindskip listens live there, as before:
+
+| | Chrome for Testing 155 | Firefox 158 |
+|---|---|---|
+| Media Source | in a worker (`video.srcObject` is a `MediaSourceHandle`): a page script sees no appends | in the page |
+| Audio buffer | (not visible) | AAC in MP4, labelled `video/mp4;codecs="mp4a.40.2"`, so the hook ignores it |
+| Buffered ahead (live channel) | | 1.3 s |
+| Grindskip, live channel | listens live; Twitch keeps a live stream at 1x, so Grindskip steps aside as if the user had set the speed | the same |
+| Grindskip, past broadcast | listens live; works at 2x, but Twitch's player caps the speed at 2x, so asking for more reads as the user's change | the same |
+
+AAC in MP4 support would cover Twitch in Firefox and most HLS and DASH players (hls.js, Shaka, dash.js) that append the audio separately, but not Twitch in Chrome. A live stream keeps only about a second ahead, which is still more than look-ahead needs (0.12 s of lead plus 0.26 s of speech).
