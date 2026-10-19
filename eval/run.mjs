@@ -18,7 +18,7 @@
 import { existsSync, readFileSync } from 'node:fs';
 import { createRequire } from 'node:module';
 import { join } from 'node:path';
-import { PARAMS } from '../src/controller/controller.js';
+import { PARAMS, minSpeechFrames } from '../src/controller/controller.js';
 import { DEFAULTS } from '../src/shared/settings.js';
 import { createModel } from '../src/vad/silero.js';
 import { decodePcm } from '../src/content/recorder.js';
@@ -198,7 +198,8 @@ function sweep(play) {
   const combos = keys.reduce((acc, k) => acc.flatMap((a) => grid[k].map((v) => ({ ...a, [k]: v }))), [{}])
     .filter((c) => c.end < c.startLow);
   const results = combos.map((acc) => {
-    const params = { ...PARAMS, ...paramsOver, ...acc };
+    // The swept minimum applies at this speed, whichever side of fastRate
+    const params = { ...PARAMS, ...paramsOver, ...acc, minSpeechFramesFast: acc.minSpeechFrames };
     const settings = { ...DEFAULTS, ...settingsOver, playSpeed: play };
     const alls = browsers.map((b) => run(settings, params, b).all);
     return {
@@ -219,7 +220,8 @@ function sweep(play) {
   console.log(`|---|---|---|---|${browsers.map(() => '---').join('|')}|`);
   const show = (r) => console.log(`| ${r.acc.startLow} | ${r.acc.startHigh} | ${r.acc.end} | ${r.acc.minSpeechFrames} | ${r.alls.map((x) => `${pct(x.speechAtTalkSpeed)} / ${pct(x.quietAtGameplaySpeed)} / ${x.falseSlowdowns} / ${sec(x.medianDelay)}`).join(' | ')} |`);
   front.slice(0, 15).forEach(show);
-  const current = results.find((r) => keys.every((k) => r.acc[k] === PARAMS[k]));
+  const now = { ...PARAMS, minSpeechFrames: minSpeechFrames(play) };
+  const current = results.find((r) => keys.every((k) => r.acc[k] === now[k]));
   if (current) {
     console.log(`\nCurrent${front.includes(current) ? ' (unbeaten)' : ''}:`);
     show(current);

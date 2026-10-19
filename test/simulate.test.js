@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
-import { FRAME_SEC } from '../src/controller/controller.js';
+import { FRAME_SEC, minSpeechFrames } from '../src/controller/controller.js';
 import { DEFAULTS } from '../src/shared/settings.js';
 import { combine, score, simulate, source } from '../eval/lib/simulate.js';
 
@@ -32,10 +32,12 @@ test('media advances at the speed being played, and rewinds jump back', () => {
 });
 
 test('clean speech scores perfectly, with rewind', () => {
-  // Without rewind each onset at gameplay speed loses about 0.4 s of media:
-  // 3 frames to detect it and 2 for the speed change to land, at 2.5x
+  // Without rewind each onset at gameplay speed loses about 0.3 s of media
+  // at 2.5x: the frame that detects it, and 3 until the speed change lands
+  // (the 2-frame lag and the frame it's decided in)
   const plain = score(simulate(sources, DEFAULTS), speech, DEFAULTS);
-  assert.ok(Math.abs(plain.speechAtTalkSpeed - (1 - 2 * 5 * FRAME_SEC * 2.5 / 6)) < 0.03, `${plain.speechAtTalkSpeed}`);
+  const lost = (minSpeechFrames(2.5) + 3) * FRAME_SEC * 2.5;
+  assert.ok(Math.abs(plain.speechAtTalkSpeed - (1 - 2 * lost / 6)) < 0.03, `${plain.speechAtTalkSpeed}`);
 
   const settings = { ...DEFAULTS, rewind: true };
   const s = score(simulate(sources, settings), speech, settings);

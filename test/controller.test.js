@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import { describe, test } from 'node:test';
-import { FRAME_SEC, PARAMS, createController, startThreshold } from '../src/controller/controller.js';
+import { FRAME_SEC, PARAMS, createController, minSpeechFrames, startThreshold } from '../src/controller/controller.js';
 import { DEFAULTS } from '../src/shared/settings.js';
 import { combine, score } from '../eval/lib/simulate.js';
 import { BROWSERS, CLIPS, replay } from './traces.js';
@@ -56,13 +56,23 @@ describe('controller', () => {
     assert.equal(r.speed, 2.5);
   });
 
-  test('needs two frames in a row above the gameplay-speed threshold', () => {
+  test('below 3x, one frame above the gameplay-speed threshold is speech', () => {
     const c = createController(settings());
     toGameplay(c, { rate: 2.5 });
     // 0.85 is speech at talk speed but not at 2.5x
     assert.equal(feed(c, repeat(0.85, 10), { rate: 2.5 }).state, 'gameplay');
-    assert.equal(feed(c, [0.95, 0.1, 0.95, 0.1, 0.95], { rate: 2.5 }).state, 'gameplay');
     const r = feed(c, [0.95], { rate: 2.5 });
+    assert.equal(r.state, 'speech');
+    assert.equal(r.speed, 1);
+  });
+
+  test('from 3x up, it takes two frames in a row', () => {
+    assert.equal(minSpeechFrames(2.75), 1);
+    assert.equal(minSpeechFrames(3), 2);
+    const c = createController(settings({ playSpeed: 4 }));
+    toGameplay(c, { rate: 4 });
+    assert.equal(feed(c, [0.95, 0.1, 0.95, 0.1, 0.95], { rate: 4 }).state, 'gameplay');
+    const r = feed(c, [0.95], { rate: 4 });
     assert.equal(r.state, 'speech');
     assert.equal(r.speed, 1);
   });
@@ -105,7 +115,7 @@ describe('controller', () => {
     c.configure(settings({ playSpeed: 3, talkSpeed: 1.25 }));
     assert.equal(c.state, 'gameplay');
     assert.equal(c.speed, 3);
-    feed(c, repeat(0.95, PARAMS.minSpeechFrames), { rate: 3 });
+    feed(c, repeat(0.95, minSpeechFrames(3)), { rate: 3 });
     assert.equal(c.speed, 1.25);
   });
 
