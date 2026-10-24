@@ -22,32 +22,26 @@ test('a speed change reaches the audio two frames after the decision', () => {
   assert.deepEqual(frames.slice(i, i + 4).map((f) => f.speed), [1, 1, 1, 2.5]);
 });
 
-test('media advances at the speed being played, and rewinds jump back', () => {
-  const plain = simulate(sources, DEFAULTS);
-  const rewound = simulate(sources, { ...DEFAULTS, rewind: true });
-  const k = rewound.findIndex((f) => f.rewindTo !== null);
-  assert.ok(k > 0);
-  assert.ok(rewound[k + 1].media < rewound[k].media);
-  assert.ok(rewound.length > plain.length);
+test('media advances at the speed being played', () => {
+  const frames = simulate(sources, DEFAULTS);
+  for (let i = 1; i < frames.length; i++) {
+    assert.ok(Math.abs(frames[i].media - frames[i - 1].media - FRAME_SEC * frames[i - 1].speed) < 1e-9);
+  }
 });
 
-test('clean speech scores perfectly, with rewind', () => {
-  // Without rewind each onset at gameplay speed loses about 0.3 s of media
-  // at 2.5x: the frame that detects it, and 3 until the speed change lands
-  // (the 2-frame lag and the frame it's decided in)
-  const plain = score(simulate(sources, DEFAULTS), speech, DEFAULTS);
+test('clean speech scores as expected', () => {
+  // Each onset at gameplay speed loses about 0.3 s of media at 2.5x: the
+  // frame that detects it, and 3 until the speed change lands (the 2-frame
+  // lag and the frame it's decided in)
+  const s = score(simulate(sources, DEFAULTS), speech, DEFAULTS);
   const lost = (minSpeechFrames(2.5) + 3) * FRAME_SEC * 2.5;
-  assert.ok(Math.abs(plain.speechAtTalkSpeed - (1 - 2 * lost / 6)) < 0.03, `${plain.speechAtTalkSpeed}`);
-
-  const settings = { ...DEFAULTS, rewind: true };
-  const s = score(simulate(sources, settings), speech, settings);
-  assert.equal(s.speechAtTalkSpeed, 1);
+  assert.ok(Math.abs(s.speechAtTalkSpeed - (1 - 2 * lost / 6)) < 0.03, `${s.speechAtTalkSpeed}`);
   assert.equal(s.falseSlowdowns, 0);
   assert.equal(s.missed, 0);
   assert.equal(s.delays.length, 2);
   assert.ok(s.quietAtGameplaySpeed > 0.95, `${s.quietAtGameplaySpeed}`);
   const all = combine([s, s]);
-  assert.equal(all.speechAtTalkSpeed, 1);
+  assert.ok(Math.abs(all.speechAtTalkSpeed - s.speechAtTalkSpeed) < 1e-9);
   assert.ok(all.medianDelay <= 0.2);
 });
 

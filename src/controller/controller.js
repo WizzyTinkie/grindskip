@@ -28,10 +28,6 @@ export const PARAMS = Object.freeze({
   fastRate: 3,
   sensitivityStep: 0.05,     // start-threshold change per step of the sensitivity setting
   maxStart: 0.98,
-  rewindMinGameplaySec: 3,   // rewind only after this long at gameplay speed...
-  rewindAfterSeekSec: 5,     // ...and this long after a seek
-  rewindMaxSec: 1.5,         // never further back than this
-  rewindMarginSec: 0.5,      // extra media time before the detected onset
 });
 
 // Start threshold for audio playing at `rate`: interpolated linearly between
@@ -51,16 +47,13 @@ export function minSpeechFrames(rate, params = PARAMS) {
   return rate >= params.fastRate ? params.minSpeechFramesFast : params.minSpeechFrames;
 }
 
-// settings: { talkSpeed, playSpeed, waitSec, sensitivity, rewind } (see
+// settings: { talkSpeed, playSpeed, waitSec, sensitivity } (see
 // shared/settings.js); params: PARAMS, or overrides for tuning.
 export function createController(settings, params = PARAMS) {
   let s = settings;
   let state;
   let run;              // frames in a row at or above the start threshold, at gameplay speed
-  let runStart;         // media time where that run started
   let waitFrames;       // frames in the wait state
-  let gameplayFrames;   // frames in the gameplay state
-  let sinceSeek = Infinity;
 
   const frames = (sec) => Math.round(sec / FRAME_SEC);
   const speedOf = (st) => (st === 'gameplay' ? s.playSpeed : s.talkSpeed);
@@ -68,25 +61,12 @@ export function createController(settings, params = PARAMS) {
   // A fresh start begins in the wait state, as if speech had just ended, so
   // the first words of a video or after a seek aren't rushed before the
   // model has heard anything.
-  function reset({ seek = false } = {}) {
+  function reset() {
     state = 'wait';
     run = 0;
-    runStart = null;
     waitFrames = 0;
-    gameplayFrames = 0;
-    if (seek) sinceSeek = 0;
   }
   reset();
-
-  // Where to jump back to when speech has just been detected at gameplay
-  // speed, or null when the safeguards say no.
-  function rewindTarget(mediaTime) {
-    if (!s.rewind || runStart === null || !Number.isFinite(mediaTime)) return null;
-    if (gameplayFrames < frames(params.rewindMinGameplaySec)) return null;
-    if (sinceSeek < frames(params.rewindAfterSeekSec)) return null;
-    const target = Math.max(runStart - params.rewindMarginSec, mediaTime - params.rewindMaxSec, 0);
-    return target < mediaTime ? target : null;
-  }
 
   return {
     get state() { return state; },
@@ -96,28 +76,17 @@ export function createController(settings, params = PARAMS) {
     reset,
 
     // One frame: p is the speech probability, rate the playback rate the
-    // frame's audio was played at, mediaTime the video position at the
-    // frame's end (only needed for rewind).
-    frame({ p, rate, mediaTime }) {
+    // frame's audio was played at.
+    frame({ p, rate }) {
       // While a speed change is taking effect the audio may still be at the
       // old rate, so the threshold is for the faster of the two
       const fast = Math.max(rate ?? 0, speedOf(state));
       const start = startThreshold(fast, s.sensitivity, params);
       const end = Math.min(params.end, start - params.minHysteresis);
-      let rewindTo = null;
-      if (sinceSeek < Infinity) sinceSeek++;
 
       if (state === 'gameplay') {
-        gameplayFrames++;
-        if (p >= start) {
-          if (run++ === 0) runStart = Number.isFinite(mediaTime) ? mediaTime - FRAME_SEC * (rate ?? 1) : null;
-        } else {
-          run = 0;
-        }
-        if (run >= minSpeechFrames(fast, params)) {
-          rewindTo = rewindTarget(mediaTime);
-          state = 'speech';
-        }
+        run = p >= start ? run + 1 : 0;
+        if (run >= minSpeechFrames(fast, params)) state = 'speech';
       } else if (state === 'speech') {
         if (p < end) {
           state = 'wait';
@@ -127,11 +96,10 @@ export function createController(settings, params = PARAMS) {
         state = 'speech';
       } else if (++waitFrames >= frames(s.waitSec)) {
         state = 'gameplay';
-        gameplayFrames = 0;
         run = 0;
       }
 
-      return { state, speed: speedOf(state), start, end, rewindTo };
+      return { state, speed: speedOf(state), start, end };
     },
   };
 }

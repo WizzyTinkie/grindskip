@@ -7,7 +7,6 @@ test('nothing stored gives the defaults', () => {
   assert.equal(DEFAULTS.version, VERSION);
   assert.equal(DEFAULTS.enabled, false);
   assert.equal(DEFAULTS.playSpeed, 2.5);
-  assert.equal(DEFAULTS.rewind, false);
 });
 
 test('defaults are inside their ranges', () => {
@@ -17,13 +16,12 @@ test('defaults are inside their ranges', () => {
 });
 
 test('valid values are kept, others replaced by the default', () => {
-  const s = migrate({ enabled: true, talkSpeed: 1.25, playSpeed: 'fast', waitSec: NaN, rewind: 1, overlay: true });
+  const s = migrate({ enabled: true, talkSpeed: 1.25, playSpeed: 'fast', waitSec: NaN, overlay: 1 });
   assert.equal(s.enabled, true);
   assert.equal(s.talkSpeed, 1.25);
   assert.equal(s.playSpeed, DEFAULTS.playSpeed);
   assert.equal(s.waitSec, DEFAULTS.waitSec);
-  assert.equal(s.rewind, false);
-  assert.equal(s.overlay, true);
+  assert.equal(s.overlay, false);
 });
 
 test('numbers are clamped to their range and snapped to its step', () => {
@@ -36,7 +34,8 @@ test('numbers are clamped to their range and snapped to its step', () => {
 });
 
 test('unknown keys are dropped and the version is current', () => {
-  const s = migrate({ version: 0, holdSec: 3, extra: true });
+  // rewind was a setting until look-ahead made it unnecessary
+  const s = migrate({ version: 0, holdSec: 3, rewind: true, extra: true });
   assert.deepEqual(Object.keys(s).sort(), Object.keys(DEFAULTS).sort());
   assert.equal(s.version, VERSION);
 });
