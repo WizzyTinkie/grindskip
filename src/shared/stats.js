@@ -4,7 +4,7 @@
 
 export const KEY = 'stats';
 
-export function migrate(stored) {
+function migrate(stored) {
   const v = stored?.savedSec;
   return { savedSec: typeof v === 'number' && Number.isFinite(v) ? v : 0 };
 }

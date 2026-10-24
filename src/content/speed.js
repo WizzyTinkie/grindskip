@@ -40,6 +40,9 @@ export function controlSpeed(video, onOverride) {
 
   return {
     get overridden() { return overridden; },
+    // Whether the speed playing is Grindskip's: set here, and not changed
+    // by anyone since
+    get active() { return ours !== null && !overridden; },
     set(rate) {
       if (overridden) return;
       let r = Math.round(Math.min(MAX_RATE, Math.max(MIN_RATE, rate)) * 100) / 100;

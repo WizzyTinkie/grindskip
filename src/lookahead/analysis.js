@@ -20,7 +20,7 @@
 import { FRAME_SEC } from '../controller/controller.js';
 import { FRAME, SAMPLE_RATE } from '../vad/silero.js';
 import { createFramer, createResampler } from '../vad/resample.js';
-import { decodable } from './codecs.js';
+import { DECODES, decodable, isWebm } from './codecs.js';
 import { createMp4Demuxer } from './fmp4.js';
 import { createTimeline } from './timeline.js';
 import { createWebmDemuxer } from './webm.js';
@@ -41,15 +41,13 @@ export function canAnalyse(mime) {
   return decodable(mime) && typeof AudioDecoder === 'function';
 }
 
-const isWebm = (b) => b[0] === 0x1a && b[1] === 0x45 && b[2] === 0xdf && b[3] === 0xa3;
-
 // The decoder config for the demuxer's first audio track it can decode
 function audioTrack(demux) {
   for (const t of demux.tracks.values()) {
     if (t.codec === 'A_OPUS') {
       return { number: t.number, config: { codec: 'opus', sampleRate: t.sampleRate, numberOfChannels: t.channels, ...(t.setup ? { description: t.setup } : {}) } };
     }
-    if (t.handler === 'soun' && !t.encrypted && /^(mp4a\.40\.\d+|opus)$/.test(t.codec)) {
+    if (t.handler === 'soun' && !t.encrypted && DECODES.mp4.test(t.codec)) {
       return { number: t.number, config: { codec: t.codec, sampleRate: t.sampleRate, numberOfChannels: t.channels, ...(t.description ? { description: t.description } : {}) } };
     }
   }
@@ -166,8 +164,11 @@ export function createAnalysis(mime, stream) {
     get error() { return error; },
     get decodedUntil() { return decodedUntil; },
     // Bytes received, frames demuxed and decoded, gaps, small steps between
-    // segments, and the decoder's queue
-    get counts() { return { ...counts, queued: decoder?.decodeQueueSize ?? null, decoder: decoder?.state ?? null }; },
+    // segments, what the demuxer skipped (laced WebM blocks, MP4 fragments
+    // it can't place) and the decoder's queue
+    get counts() {
+      return { ...counts, skipped: demux?.skipped ?? 0, queued: decoder?.decodeQueueSize ?? null, decoder: decoder?.state ?? null };
+    },
     // fn(at, p, samples) for each frame analysed from now on (the debug
     // recording), or null for none
     tap(fn) {

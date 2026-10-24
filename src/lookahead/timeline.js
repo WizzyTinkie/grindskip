@@ -21,17 +21,6 @@ export function createTimeline() {
     // By frame index (media time / 32 ms, rounded down)
     has(k) { return p.has(k); },
     get(k) { return p.get(k); },
-    // The frames from media time t to t + sec, oldest first, or null if
-    // any of them hasn't been analysed
-    span(t, sec) {
-      const out = [];
-      const last = Math.floor((t + sec) / FRAME_SEC);
-      for (let k = Math.floor(t / FRAME_SEC); k <= last; k++) {
-        if (!p.has(k)) return null;
-        out.push(p.get(k));
-      }
-      return out;
-    },
     // How far beyond media time t the analysis reaches without a hole, in
     // seconds (0 if the frame at t isn't analysed)
     ahead(t) {
@@ -50,6 +39,5 @@ export function createTimeline() {
       const k0 = Math.floor(t / FRAME_SEC);
       for (const k of p.keys()) if (k < k0) p.delete(k);
     },
-    clear() { p.clear(); },
   };
 }

@@ -1,9 +1,9 @@
 // The background script (Chrome's service worker, Firefox's event page):
 // turns Grindskip on or off from the keyboard shortcut, shows whether it's
 // on with a green or gray toolbar icon, adds the time saved that the tabs
-// report to the stored total and, in Chrome, opens the offscreen document when a content script can't compile
-// WebAssembly under the page's CSP, and closes it when the document says
-// it's idle.
+// report to the stored total and, in Chrome, opens the offscreen document
+// when a content script can't compile WebAssembly under the page's CSP, and
+// closes it when the document says it's idle.
 import { ADD_SAVED } from '../shared/messages.js';
 import { load, toggle, watch } from '../shared/settings.js';
 import { createSaver } from '../shared/stats.js';

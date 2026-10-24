@@ -1,9 +1,9 @@
 // The content script's end of the page hook (page/hook.js): asks it for the
 // followed video's audio and runs a look-ahead analysis (analysis.js) on
 // each of its audio SourceBuffers.
+import { HOOK_HELLO } from '../shared/messages.js';
 import { canAnalyse, createAnalysis } from './analysis.js';
 
-const HELLO = 'grindskip:lookahead';
 // The page sends these: numbers only
 const num = (x, otherwise) => (typeof x === 'number' && !Number.isNaN(x) ? x : otherwise);
 
@@ -44,7 +44,7 @@ export function createFeed(createStream) {
       analyses.get(m.buffer)?.analysis?.gap();
     }
   };
-  window.postMessage({ type: HELLO }, '*', [channel.port2]);
+  window.postMessage({ type: HOOK_HELLO }, '*', [channel.port2]);
 
   function stopAll() {
     for (const { analysis } of analyses.values()) analysis?.stop();

@@ -83,6 +83,12 @@ test('laced blocks are counted and skipped', () => {
   const d = createWebmDemuxer();
   const laced = el(0xa3, Uint8Array.of(0x81, 0, 0, 0x82, 1, 2, 3));
   const frames = d.push(Uint8Array.from([...init, ...open(0x1f43b675, el(0xe7, num(0, 2)), laced, simpleBlock(20, [9]))]));
-  assert.equal(d.laced, 1);
+  assert.equal(d.skipped, 1);
   assert.equal(frames.length, 1);
+});
+
+test('a damaged stream fails rather than waiting for more bytes forever', () => {
+  const d = createWebmDemuxer();
+  d.push(init);
+  assert.throws(() => d.push(Uint8Array.of(0, 0, 0, 0)), /WebM/);
 });

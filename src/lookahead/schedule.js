@@ -14,7 +14,7 @@
 //   change, which takes a while to take effect, lands before the speech:
 //   leadSec, or more where the change is measured to take longer
 //   (lag.js).
-import { FRAME_SEC, PARAMS } from '../controller/controller.js';
+import { FRAME_SEC, PARAMS, startThreshold } from '../controller/controller.js';
 
 export const LOOKAHEAD = Object.freeze({
   minFrames: 8,
@@ -46,7 +46,8 @@ export function createSchedule(timeline, settings, params = PARAMS, look = LOOKA
   }
 
   function step(p) {
-    const start = params.startLow - s.sensitivity * params.sensitivityStep;
+    // The analysed audio is at normal speed
+    const start = startThreshold(1, s.sensitivity, params);
     const end = Math.min(params.end, start - params.minHysteresis);
     if (state === 'gameplay') {
       run = p >= start ? run + 1 : 0;

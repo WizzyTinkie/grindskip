@@ -1,7 +1,7 @@
 // The toolbar popup: the settings, saved straight to storage (the content
 // scripts follow storage), and the state of the active tab's video.
 import { RECORD_START, RECORD_STOP, RESUME, STATUS } from '../shared/messages.js';
-import { DEFAULTS, RANGES, load, migrate, save } from '../shared/settings.js';
+import { DEFAULTS, RANGES, load, migrate, save, watch } from '../shared/settings.js';
 import { duration, load as loadStats } from '../shared/stats.js';
 
 const api = globalThis.browser ?? globalThis.chrome;
@@ -79,9 +79,9 @@ function showStatus(s) {
   else state = note ? '–' : 'Waiting for the video to play';
   $('state').textContent = state;
   $('speed').textContent = s?.video && Number.isFinite(s.speed) ? `${s.speed.toFixed(2)}x` : '–';
-  const lagMs = s?.mode === 'look-ahead' ? s.lookahead?.lagMs : null;
-  $('mode').textContent = s?.video && s.mode ? MODES[s.mode] + (lagMs !== null && lagMs !== undefined ? ` · ${lagMs} ms` : '') : '–';
-  $('mode').title = lagMs !== null && lagMs !== undefined ? `Speed changes take about ${lagMs} ms to take effect here, so Grindskip slows down that much earlier` : '';
+  const lagMs = s?.mode === 'look-ahead' ? s.lookahead?.lagMs ?? null : null;
+  $('mode').textContent = s?.video && s.mode ? MODES[s.mode] + (lagMs !== null ? ` · ${lagMs} ms` : '') : '–';
+  $('mode').title = lagMs !== null ? `Speed changes take about ${lagMs} ms to take effect here, so Grindskip slows down that much earlier` : '';
   $('saved-video').textContent = s?.video && s.saved ? duration(s.saved.video) : '–';
   $('note').textContent = note ?? '';
   $('note').hidden = !note;
@@ -116,4 +116,11 @@ load(api.storage).then((s) => {
   render();
   poll();
   setInterval(poll, POLL_MS);
+  // Changed elsewhere while the popup is open: on or off by the shortcut,
+  // debug mode in the options page. The rest only changes here, and taking
+  // it from storage could undo slider moves still being saved.
+  watch(api.storage, (next) => {
+    settings = { ...settings, enabled: next.enabled, debug: next.debug };
+    render();
+  });
 });
