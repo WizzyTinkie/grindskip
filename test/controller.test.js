@@ -9,12 +9,9 @@ const settings = (over = {}) => ({ ...DEFAULTS, ...over });
 const framesIn = (sec) => Math.round(sec / FRAME_SEC);
 
 // Feeds probabilities at a fixed rate; returns the last result
-function feed(c, ps, { rate = 1, media = { t: 10 } } = {}) {
+function feed(c, ps, { rate = 1 } = {}) {
   let r;
-  for (const p of ps) {
-    media.t += FRAME_SEC * rate;
-    r = c.frame({ p, rate, mediaTime: media.t });
-  }
+  for (const p of ps) r = c.frame({ p, rate });
   return r;
 }
 const repeat = (p, n) => Array(n).fill(p);
@@ -122,70 +119,9 @@ describe('controller', () => {
   test('reset goes back to the wait state', () => {
     const c = createController(settings());
     toGameplay(c);
-    c.reset({ seek: true });
+    c.reset();
     assert.equal(c.state, 'wait');
     assert.equal(c.speed, 1);
-  });
-});
-
-describe('rewind on speech', () => {
-  // A controller that has been at gameplay speed for `sec` seconds
-  function atGameplayFor(sec, over = {}) {
-    const c = createController(settings({ rewind: true, ...over }));
-    const media = { t: 100 };
-    toGameplay(c, { rate: 2.5, media });
-    feed(c, repeat(0, framesIn(sec)), { rate: 2.5, media });
-    return { c, media };
-  }
-
-  test('jumps back to just before the frames that started the speech', () => {
-    const { c, media } = atGameplayFor(5);
-    const before = media.t;
-    const r = feed(c, repeat(0.95, PARAMS.minSpeechFrames), { rate: 2.5, media });
-    assert.equal(r.state, 'speech');
-    // The run's first frame began one frame (at 2.5x) after `before`
-    assert.ok(Math.abs(r.rewindTo - (before - PARAMS.rewindMarginSec)) < 1e-9, `${r.rewindTo} vs ${before}`);
-    assert.ok(media.t - r.rewindTo <= PARAMS.rewindMaxSec);
-  });
-
-  test('is off by default', () => {
-    const { c, media } = atGameplayFor(5, { rewind: false });
-    assert.equal(feed(c, repeat(0.95, PARAMS.minSpeechFrames), { rate: 2.5, media }).rewindTo, null);
-  });
-
-  test('never jumps back more than 1.5 s', () => {
-    const c = createController(settings({ rewind: true }), { ...PARAMS, minSpeechFrames: 20 });
-    const media = { t: 100 };
-    toGameplay(c, { rate: 2.5, media });
-    feed(c, repeat(0, framesIn(5)), { rate: 2.5, media });
-    const r = feed(c, repeat(0.9, 20), { rate: 2.5, media });
-    assert.ok(Math.abs(media.t - r.rewindTo - PARAMS.rewindMaxSec) < 1e-9);
-  });
-
-  test('only after a few seconds at gameplay speed', () => {
-    const { c, media } = atGameplayFor(1);
-    const r = feed(c, repeat(0.95, PARAMS.minSpeechFrames), { rate: 2.5, media });
-    assert.equal(r.state, 'speech');
-    assert.equal(r.rewindTo, null);
-  });
-
-  test('not right after a seek', () => {
-    const c = createController(settings({ rewind: true }));
-    const media = { t: 100 };
-    c.reset({ seek: true });
-    toGameplay(c, { rate: 2.5, media });
-    feed(c, repeat(0, framesIn(PARAMS.rewindAfterSeekSec - 2)), { rate: 2.5, media });
-    assert.ok(framesIn(DEFAULTS.waitSec) + framesIn(PARAMS.rewindAfterSeekSec - 2) < framesIn(PARAMS.rewindAfterSeekSec));
-    assert.equal(feed(c, repeat(0.95, PARAMS.minSpeechFrames), { rate: 2.5, media }).rewindTo, null);
-  });
-
-  test('not without a media time', () => {
-    const c = createController(settings({ rewind: true }));
-    for (let i = 0; i < framesIn(10); i++) c.frame({ p: 0, rate: 2.5 });
-    let r;
-    for (let i = 0; i < PARAMS.minSpeechFrames; i++) r = c.frame({ p: 0.95, rate: 2.5 });
-    assert.equal(r.state, 'speech');
-    assert.equal(r.rewindTo, null);
   });
 });
 

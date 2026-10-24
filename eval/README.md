@@ -60,4 +60,4 @@ Replays each clip closed-loop: the controller hears the recording at the speed i
 - **median delay:** from a labelled onset reached at gameplay speed to the switch, in wall time; **missed:** onsets with no switch within 3 s;
 - the browsers' inference time per frame.
 
-`--play 2,2.5,3,4` scores other gameplay speeds, `--set key=value` changes a setting or a controller parameter (`--set startHigh=0.85`, `--set rewind=true`), and `--sweep` searches the thresholds and the minimum speech duration at each gameplay speed. `--probs node` reruns Silero under Node on the recorded audio instead of using the browser's probabilities (`--model` for another model, as in Phase 5).
+`--play 2,2.5,3,4` scores other gameplay speeds, `--set key=value` changes a setting or a controller parameter (`--set startHigh=0.85`, `--set waitSec=1`), and `--sweep` searches the thresholds and the minimum speech duration at each gameplay speed. `--probs node` reruns Silero under Node on the recorded audio instead of using the browser's probabilities (`--model` for another model, as in Phase 5).

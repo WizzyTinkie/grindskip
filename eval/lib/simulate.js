@@ -27,7 +27,7 @@ export function source(media, p) {
 }
 
 // sources: { [speed]: source }; settings.talkSpeed and settings.playSpeed
-// must both have one. Returns per frame { media, speed, state, rewindTo }.
+// must both have one. Returns per frame { media, speed, state }.
 export function simulate(sources, settings, params, { lagFrames = 2 } = {}) {
   const srcs = [sources[settings.talkSpeed], sources[settings.playSpeed]];
   if (srcs.some((s) => !s)) throw new Error(`no recording at ${settings.talkSpeed}x or ${settings.playSpeed}x`);
@@ -39,10 +39,9 @@ export function simulate(sources, settings, params, { lagFrames = 2 } = {}) {
   let playing = c.speed;     // the speed the audio is at
   let pending = null;        // { speed, in: frames until the audio switches }
   while (media <= end) {
-    const r = c.frame({ p: sources[playing].at(media), rate: playing, mediaTime: media });
-    frames.push({ media, speed: playing, state: r.state, rewindTo: r.rewindTo });
+    const r = c.frame({ p: sources[playing].at(media), rate: playing });
+    frames.push({ media, speed: playing, state: r.state });
     media += FRAME_SEC * playing;
-    if (r.rewindTo !== null) media = r.rewindTo;
     if (r.speed !== (pending?.speed ?? playing)) pending = { speed: r.speed, in: lagFrames };
     if (pending && pending.in-- <= 0) {
       playing = pending.speed;
@@ -57,7 +56,6 @@ const BIN = 0.01;
 // The Phase 3 measures for one replay against speech labels (intervals in
 // media seconds, see labels.mjs):
 //   speechAtTalkSpeed     share of the labelled speech heard at talk speed
-//                         (with rewind, heard at talk speed at least once)
 //   quietAtGameplaySpeed  share of the media without speech played at
 //                         gameplay speed, leaving out the wait after speech
 //   falseSlowdowns        switches to talk speed with no labelled speech

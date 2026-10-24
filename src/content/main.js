@@ -132,7 +132,6 @@ function createPipeline(video) {
   let generation = 0;     // bumped on seeks and new sources; older frames are dropped
   let queue = [];
   let pumping = false;
-  let selfSeek = false;
   let failures = 0;       // frames in a row the detector failed on
   let last = null;        // the latest frame's probability and decision
   let schedule = null;    // look-ahead's, while it decides
@@ -192,14 +191,9 @@ function createPipeline(video) {
   }
 
   function decide(p, meta) {
-    const r = controller.frame({ p, rate: meta.rate, mediaTime: meta.mediaTime });
+    const r = controller.frame({ p, rate: meta.rate });
     last = { p, ...r };
     speed.set(r.speed);
-    if (r.rewindTo !== null && !speed.overridden) {
-      saved.rewound(video.currentTime - r.rewindTo);
-      selfSeek = true;
-      video.currentTime = r.rewindTo;
-    }
     show();
     return r;
   }
@@ -257,10 +251,8 @@ function createPipeline(video) {
   const onSeeking = () => {
     schedule?.reset(video.currentTime);
     lag.reset();
-    const rewind = selfSeek;
-    selfSeek = false;
-    if (!rewind) controller.reset({ seek: true });
-    restart(rewind ? 'rewind' : 'seek');
+    controller.reset();
+    restart('seek');
   };
   const onLoadStart = () => {
     feed?.follow(video.currentSrc);

@@ -5,7 +5,7 @@
 //   --browsers chrome,firefox   which recordings (default: both)
 //   --clips a,b                 which clips (default: all)
 //   --play 2.5                  gameplay speed(s), comma-separated (default 2.5)
-//   --set key=value             override a setting (waitSec, sensitivity, rewind)
+//   --set key=value             override a setting (waitSec, sensitivity)
 //                               or a controller parameter (startHigh, end, ...)
 //   --probs browser|node        the browser's probabilities (default), or
 //                               Silero rerun under Node on the recorded audio

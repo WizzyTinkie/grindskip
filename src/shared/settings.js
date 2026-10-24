@@ -21,7 +21,6 @@ export const DEFAULTS = Object.freeze({
   playSpeed: 2.5,     // speed while no one is talking
   waitSec: 1.5,       // time without speech before speeding up
   sensitivity: 0,     // higher: quieter or less clear speech also counts
-  rewind: false,      // jump back to where the speech started
   overlay: false,     // show the speech meter on the page
 });
 
@@ -32,7 +31,7 @@ export function migrate(stored) {
   // Version 1 is the first; later versions add their steps here, each
   // taking the object from version n to n + 1.
   const out = { ...DEFAULTS };
-  for (const key of ['enabled', 'rewind', 'overlay']) {
+  for (const key of ['enabled', 'overlay']) {
     if (typeof s[key] === 'boolean') out[key] = s[key];
   }
   for (const [key, r] of Object.entries(RANGES)) {

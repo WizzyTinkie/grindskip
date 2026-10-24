@@ -1,8 +1,7 @@
 // Counts the time Grindskip saves on a video, compared with watching it at
 // 1x: media time dm played at rate r takes dm / r, saving dm * (1 - 1/r).
-// A rewind costs the media time it jumps back over. Seeks by the user and
-// stretches played while active() is false (the user set the speed) don't
-// count.
+// Seeks and stretches played while active() is false (the user set the
+// speed) don't count.
 
 // A step in media time longer than this between two updates isn't playback
 // (a seek the events missed, a new source)
@@ -37,11 +36,6 @@ export function countSaved(video, active = () => true) {
   return {
     get seconds() { return seconds; },
     get unsent() { return unsent; },
-    // Grindskip jumped back this far: that media plays again
-    rewound(sec) {
-      update();
-      if (sec > 0) add(-sec);
-    },
     // A new source: the count for this video starts again
     newVideo() {
       seconds = 0;

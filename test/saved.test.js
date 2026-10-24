@@ -41,7 +41,7 @@ test('media played at 2.5x saves 60% of it; at 1x nothing', () => {
   near(s.seconds, 6);
 });
 
-test('seeks by the user are not counted, rewinds cost what they jump back', () => {
+test('seeks are not counted', () => {
   const v = new FakeVideo();
   v.playbackRate = 2;
   const s = countSaved(v);
@@ -50,9 +50,6 @@ test('seeks by the user are not counted, rewinds cost what they jump back', () =
   v.seek(100);
   v.seek(50);
   near(s.seconds, 2);
-  s.rewound(1.5);
-  v.seek(48.5);
-  near(s.seconds, 0.5);
 });
 
 test('nothing counts while the user has set the speed', () => {
