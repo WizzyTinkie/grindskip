@@ -4,7 +4,7 @@
 // by capturing its audio and running the speech detector on it live. It
 // stays idle (no model, no capture) until Grindskip is on and an unmuted
 // video plays.
-import { FRAME_SEC, PARAMS, createController, startThreshold } from '../controller/controller.js';
+import { PARAMS, createController, startThreshold } from '../controller/controller.js';
 import { createFeed } from '../lookahead/feed.js';
 import { createLagMeter } from '../lookahead/lag.js';
 import { LOOKAHEAD, createSchedule } from '../lookahead/schedule.js';
@@ -29,10 +29,12 @@ const REPORT_SAVED_MS = 10000;
 // How often the speed follows the look-ahead schedule
 const TICK_MS = 30;
 // Look-ahead keeps this much of the analysis behind the playing position,
-// for seeking back
-const KEEP_BEHIND_SEC = 120;
+// for seeking back, and drops what's older every PRUNE_SEC
+const ANALYSIS_BEHIND_SEC = 120;
+const PRUNE_SEC = 10;
 // On top of the measured time a speed change takes, for the tick and noise
 const LAG_MARGIN_SEC = 0.06;
+const OVERRIDDEN_NOTE = 'Speed changed by hand, so Grindskip has stopped changing it on this video';
 
 let settings = DEFAULTS;
 let stopTracking = null;
@@ -89,7 +91,13 @@ async function openVad() {
       const s = spare ?? createRemoteVad(api.runtime);
       spare = null;
       streams.add(s);
-      return s;
+      return {
+        ...s,
+        release() {
+          streams.delete(s);
+          s.release();
+        },
+      };
     },
     release() {
       for (const s of [...streams, spare]) s?.release();
@@ -123,7 +131,9 @@ function createPipeline(video) {
     recorder?.event('override', { rate });
     show();
   });
-  const saved = countSaved(video, () => !speed.overridden);
+  // Only while the speed is Grindskip's: not the player's own before
+  // Grindskip sets one, nor the user's after
+  const saved = countSaved(video, () => speed.active);
   let detector = null;     // its live stream
   let where = null;
   let capture = null;
@@ -137,6 +147,7 @@ function createPipeline(video) {
   let last = null;        // the latest frame's probability and decision
   let schedule = null;    // look-ahead's, while it decides
   let analysis = null;    // the look-ahead analysis it follows
+  let prunedAt = -Infinity;
 
   async function begin() {
     if (schedule || starting || capture || error || video.muted || video.paused) return;
@@ -145,9 +156,9 @@ function createPipeline(video) {
     try {
       const v = await getVad();
       where = v.where;
-      detector ??= v.createStream();
       // Look-ahead may have taken over while the model loaded
       if (stopped || schedule) return;
+      detector ??= v.createStream();
       capture = startCapture(video, onFrame);
     } catch (e) {
       console.warn('Grindskip:', e);
@@ -235,7 +246,10 @@ function createPipeline(video) {
     const t = video.currentTime;
     const now = performance.now() / 1000;
     lag.sample(now, t);
-    if (analysis.timeline.size > 2 * KEEP_BEHIND_SEC / FRAME_SEC) analysis.timeline.prune(t - KEEP_BEHIND_SEC);
+    if (now - prunedAt >= PRUNE_SEC) {
+      prunedAt = now;
+      analysis.timeline.prune(t - ANALYSIS_BEHIND_SEC);
+    }
     const at = schedule.at(t, leadSec());
     const p = analysis.timeline.at(t) ?? null;
     const start = startThreshold(1, settings.sensitivity);
@@ -262,10 +276,13 @@ function createPipeline(video) {
     schedule = null;
     analysis = null;
     controller.reset();
-    speed.resume();
+    // Before resume(): what played until now was at Grindskip's speed
     reportSaved(saved);
     saved.newVideo();
+    speed.resume();
     last = null;
+    // The new source may load or play where the last one didn't
+    error = null;
     restart('new source');
     show();
   };
@@ -284,13 +301,13 @@ function createPipeline(video) {
 
   function note() {
     if (schedule) {
-      if (speed.overridden) return 'Speed changed by hand, so Grindskip has stopped changing it on this video';
+      if (speed.overridden) return OVERRIDDEN_NOTE;
       return last && !last.known ? 'Analysing the audio ahead…' : null;
     }
     if (error) return error;
     if (starting) return 'Loading the speech detector…';
     if (failures >= MAX_FAILURES) return 'The speech detector isn’t responding';
-    if (speed.overridden) return 'Speed changed by hand, so Grindskip has stopped changing it on this video';
+    if (speed.overridden) return OVERRIDDEN_NOTE;
     if (capture?.suspended) return 'Click the page to start listening';
     return null;
   }
@@ -335,10 +352,12 @@ function createPipeline(video) {
       queue = [];
       for (const [name, fn] of Object.entries(events)) video.removeEventListener(name, fn);
       capture?.stop();
-      speed.restore();
-      speed.stop();
+      detector?.release?.();
+      // Before restore(): what played until now was at Grindskip's speed
       reportSaved(saved);
       saved.stop();
+      speed.restore();
+      speed.stop();
     },
   };
 }

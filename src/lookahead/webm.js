@@ -20,13 +20,15 @@ const MASTER = new Set([
 const CLUSTER = [0x1f, 0x43, 0xb6, 0x75];
 
 // A variable-length integer in bytes at p: { value, length, unknown }, or
-// null if they aren't all there; keepMarker for element IDs
+// null if they aren't all there; keepMarker for element IDs. None starts
+// with a 0 byte: the stream is damaged, or not WebM.
 function vint(bytes, p, keepMarker) {
   if (p >= bytes.length) return null;
   const first = bytes[p];
+  if (first === 0) throw new Error(`WebM: no element at byte ${p}`);
   let length = 1;
-  while (length <= 8 && !(first & (0x80 >> (length - 1)))) length++;
-  if (length > 8 || p + length > bytes.length) return null;
+  while (!(first & (0x80 >> (length - 1)))) length++;
+  if (p + length > bytes.length) return null;
   let value = keepMarker ? first : first & (0xff >> length);
   let allOnes = value === (0xff >> length);
   for (let i = 1; i < length; i++) {
@@ -50,7 +52,7 @@ export function createWebmDemuxer() {
   let entry = {};             // the TrackEntry being read
   let resync = false;         // skip to the next Cluster before reading
   const tracks = new Map();   // number -> { number, codec, setup, sampleRate, channels }
-  let laced = 0;
+  let skipped = 0;            // laced blocks
 
   function fileEntry() {
     if (entry.number !== undefined) tracks.set(entry.number, entry);
@@ -63,7 +65,7 @@ export function createWebmDemuxer() {
     const rel = (data[n.length] << 8 | data[n.length + 1]) << 16 >> 16;
     const flags = data[n.length + 2];
     if (flags & 0x06) {
-      laced++;
+      skipped++;
       return;
     }
     frames.push({ track: n.value, timestamp: (cluster + rel) * scale / 1e9, data: data.slice(n.length + 3) });
@@ -97,7 +99,7 @@ export function createWebmDemuxer() {
 
   return {
     get tracks() { return tracks; },
-    get laced() { return laced; },
+    get skipped() { return skipped; },
     // Drops the bytes not read yet; with resync, reading starts again at
     // the next Cluster (after appends were missed, or the SourceBuffer was
     // aborted). The tracks are kept.

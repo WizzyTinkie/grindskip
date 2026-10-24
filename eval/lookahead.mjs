@@ -17,7 +17,7 @@
 //   --stretches       list every talk stretch
 import { readFileSync } from 'node:fs';
 import { createRequire } from 'node:module';
-import { FRAME_SEC, PARAMS } from '../src/controller/controller.js';
+import { FRAME_SEC, PARAMS, startThreshold } from '../src/controller/controller.js';
 import { KEEP_BEHIND_SEC, decodePcm } from '../src/content/recorder.js';
 import { LOOKAHEAD, createSchedule } from '../src/lookahead/schedule.js';
 import { createTimeline } from '../src/lookahead/timeline.js';
@@ -163,7 +163,7 @@ if (args.includes('--stretches')) {
   for (const [name, list] of [['browser', before], ['replayed', after]]) {
     console.log(`  ${name}:`);
     for (const s of list) {
-      const first = [...timeline.from(s.from - 1)].filter(([m, p]) => m >= s.from && m <= s.to && p >= PARAMS.startLow - settings.sensitivity * PARAMS.sensitivityStep).sort((a, b) => a[0] - b[0])[0];
+      const first = [...timeline.from(s.from - 1)].filter(([m, p]) => m >= s.from && m <= s.to && p >= startThreshold(1, settings.sensitivity)).sort((a, b) => a[0] - b[0])[0];
       console.log(`    ${s.from.toFixed(2)}–${s.to.toFixed(2)} s${first ? `, speech from ${first[0].toFixed(2)} s` : ', no speech in it'}`);
     }
   }

@@ -96,7 +96,6 @@ export function startCapture(video, onFrame) {
 
   return {
     get suspended() { return ctx.state === 'suspended'; },
-    get hasAudio() { return track !== null; },
     // Drops the audio in the resampler and framer, e.g. after a seek.
     reset() {
       resampler.reset();

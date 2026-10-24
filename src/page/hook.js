@@ -21,8 +21,8 @@
 // before it, or in "sequence" mode, where the browser sets it itself, the
 // one after it (so those appends are passed on once the browser is done).
 //
-// Protocol: the content script posts { type: HELLO } to the window with a
-// MessagePort. On that port it sends { follow: url } (the followed video's
+// Protocol: the content script posts { type: HOOK_HELLO } to the window with
+// a MessagePort. On that port it sends { follow: url } (the followed video's
 // currentSrc, or null for none) and receives
 //   { type: 'following', url, found }   whether url is a MediaSource's
 //   { type: 'buffer', buffer, mime }    an audio SourceBuffer of it
@@ -34,10 +34,10 @@
 //                                       and append window
 //   { type: 'gap', buffer }             appends were missed or aborted: the
 //                                       next one starts afresh
-import { hasAudio } from '../lookahead/codecs.js';
+import { hasAudio, isWebm } from '../lookahead/codecs.js';
+import { HOOK_HELLO } from '../shared/messages.js';
 
 (() => {
-  const HELLO = 'grindskip:lookahead';
   // About four minutes of YouTube's Opus per buffer
   const KEEP_BYTES = 4 * 1024 * 1024;
   const KEEP_SOURCES = 8;
@@ -66,9 +66,9 @@ import { hasAudio } from '../lookahead/codecs.js';
     }
     return sourceIds.get(ms);
   };
-  const isInit = (b) => (b[0] === 0x1a && b[1] === 0x45 && b[2] === 0xdf && b[3] === 0xa3)  // WebM
-    || (b[4] === 0x66 && b[5] === 0x74 && b[6] === 0x79 && b[7] === 0x70)                   // MP4 ftyp
-    || (b[4] === 0x6d && b[5] === 0x6f && b[6] === 0x6f && b[7] === 0x76);                  // or moov
+  const isInit = (b) => isWebm(b)
+    || (b[4] === 0x66 && b[5] === 0x74 && b[6] === 0x79 && b[7] === 0x70)   // MP4 ftyp
+    || (b[4] === 0x6d && b[5] === 0x6f && b[6] === 0x6f && b[7] === 0x76);  // or moov
   const number = (x, otherwise) => (typeof x === 'number' && !Number.isNaN(x) ? x : otherwise);
 
   // Files an append in what's kept, and passes it on if followed
@@ -192,7 +192,7 @@ import { hasAudio } from '../lookahead/codecs.js';
   }
 
   window.addEventListener('message', (e) => {
-    if (e.source !== window || e.data?.type !== HELLO || !e.ports?.[0]) return;
+    if (e.source !== window || e.data?.type !== HOOK_HELLO || !e.ports?.[0]) return;
     e.stopImmediatePropagation();
     port = e.ports[0];
     following = null;

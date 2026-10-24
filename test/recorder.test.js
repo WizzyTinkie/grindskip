@@ -42,6 +42,9 @@ test('stops adding frames when full', () => {
   for (let i = 0; i < n + 10; i++) r.frame(f, { p: 0, rate: 1, mediaTime: i });
   assert.equal(r.full, true);
   assert.equal(r.toJSON().frames.p.length, n);
+  // Nor what look-ahead analyses from then on
+  r.analysed(0, 0.5, f);
+  assert.equal(r.toJSON().lookahead, null);
 });
 
 test('with look-ahead, keeps the ticks, the status and the analysed frames around what played', () => {

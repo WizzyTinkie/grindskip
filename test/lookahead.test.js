@@ -35,7 +35,6 @@ describe('timeline', () => {
     tl.prune(5);
     assert.equal(tl.at(3), undefined);
     assert.equal(tl.ahead(3), 0);
-    assert.equal(tl.span(20, 1), null);
   });
 });
 

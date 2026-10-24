@@ -20,11 +20,10 @@
 // Events (resets, seeks, mode changes, overrides) carry the live frame they
 // came before and the seconds since the recording started.
 import { FRAME_SEC } from '../controller/controller.js';
+import { FRAME, SAMPLE_RATE } from '../vad/silero.js';
 
 export const FORMAT = 'grindskip-recording';
 export const MAX_SEC = 600;
-const FRAME = 512;
-const SAMPLE_RATE = 16000;
 const MAX_FRAMES = Math.round(MAX_SEC * SAMPLE_RATE / FRAME);
 // Analysed audio held while recording, at most: what plays in MAX_SEC and
 // as much again ahead of it
@@ -101,6 +100,7 @@ export function createRecorder(info = {}, now = () => performance.now() / 1000) 
     // A frame the look-ahead analysis heard, starting at media time `at`;
     // samples: its 16 kHz audio, or null if it wasn't kept
     analysed(at, p, samples = null) {
+      if (seconds() >= MAX_SEC) return;
       const k = Math.round(at / FRAME_SEC);
       const had = analysed.get(k);
       let audio = null;
@@ -134,8 +134,9 @@ export function createRecorder(info = {}, now = () => performance.now() / 1000) 
       }
     },
 
-    // Something that happened: 'reset' (the detector's state was cleared),
-    // 'seek', 'source', 'override', 'settings', 'mode', 'drop'
+    // Something that happened: 'reset' (what was heard so far was dropped;
+    // reason: 'seek', 'new source' or 'look-ahead'), 'override', 'settings',
+    // 'mode', 'drop'
     event(type, data = {}) {
       if (seconds() < MAX_SEC) events.push({ frame: n, wall: wall(), type, ...data });
     },

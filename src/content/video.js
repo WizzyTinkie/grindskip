@@ -1,8 +1,8 @@
-// Finds the video to follow: the largest one on the page, or one that starts
-// playing while the followed one isn't. Picks again when the followed video
-// leaves the page, as when YouTube swaps its player.
+// Finds the video to follow: the largest one on the page, or one that plays
+// with sound while the followed one doesn't. Picks again when the followed
+// video leaves the page, as when YouTube swaps its player.
 
-export function largestVideo(doc) {
+function largestVideo(doc) {
   let best = null;
   let bestArea = -1;
   for (const v of doc.querySelectorAll('video')) {
@@ -41,19 +41,24 @@ export function trackVideo(doc, onChange) {
   });
   observer.observe(doc.documentElement, { childList: true, subtree: true });
 
-  // Media events don't bubble, but they can be caught on the way down
-  const onPlay = (e) => {
+  // Media events don't bubble, but they can be caught on the way down. A
+  // video that starts playing, or is unmuted while it plays, takes over from
+  // a paused or muted one if it has sound itself; a muted one (a preview, an
+  // ad) only takes over from one that has left the page.
+  const onMedia = (e) => {
     const v = e.target;
-    if (v?.localName !== 'video' || v === current) return;
-    if (!current || !current.isConnected || current.paused) choose(v);
+    if (v?.localName !== 'video' || v === current || v.paused) return;
+    if (!current || !current.isConnected) choose(v);
+    else if (!v.muted && (current.paused || current.muted)) choose(v);
   };
-  doc.addEventListener('play', onPlay, true);
+  const mediaEvents = ['play', 'volumechange'];
+  for (const type of mediaEvents) doc.addEventListener(type, onMedia, true);
 
   rescan();
   return () => {
     observer.disconnect();
     clearTimeout(timer);
-    doc.removeEventListener('play', onPlay, true);
+    for (const type of mediaEvents) doc.removeEventListener(type, onMedia, true);
     current = null;
   };
 }

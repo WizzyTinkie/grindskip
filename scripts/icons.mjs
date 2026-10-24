@@ -1,7 +1,8 @@
 // Renders assets/icons/icon.svg to the PNG sizes the manifests name, in
 // green, and the toolbar sizes again in gray for while Grindskip is off
-// (icon-off-*.png, the same icon with the green swapped). The PNGs are committed, so building needs no SVG
-// renderer; run this after changing the SVG. Needs rsvg-convert (librsvg).
+// (icon-off-*.png, the same icon with the green swapped). The PNGs are
+// committed, so building needs no SVG renderer; run this after changing the
+// SVG. Needs rsvg-convert (librsvg).
 //
 // Usage: node scripts/icons.mjs
 import { execFileSync } from 'node:child_process';

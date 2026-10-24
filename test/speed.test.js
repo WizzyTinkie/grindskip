@@ -96,3 +96,23 @@ test('choosing exactly 1x while Grindskip plays normal speed changes nothing', a
   s.set(1);
   assert.equal(v.playbackRate, NORMAL_RATE);
 });
+
+test('the speed counts as Grindskip’s only once set, and until someone else changes it', async () => {
+  const v = new FakeVideo();
+  const s = controlSpeed(v);
+  v.playbackRate = 2;      // the player's own, before Grindskip sets one
+  await settle();
+  assert.equal(s.active, false);
+  s.set(2.5);
+  assert.equal(s.active, true);
+  await settle();
+  v.playbackRate = 1.75;
+  await settle();
+  assert.equal(s.active, false);
+  s.resume();
+  assert.equal(s.active, false);
+  s.set(1);
+  assert.equal(s.active, true);
+  s.restore();
+  assert.equal(s.active, false);
+});
