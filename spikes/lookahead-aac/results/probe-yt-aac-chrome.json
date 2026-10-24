@@ -1,0 +1,228 @@
+{
+ "browser": "chrome",
+ "version": "Chrome/155.0.8059.79",
+ "target": "yt-aac",
+ "url": "https://www.youtube.com/watch?v=BFG1Q7zpNtE",
+ "video": {
+  "t": 30.04,
+  "paused": false,
+  "src": "blob:https://www.youtube.com/8",
+  "srcObject": null
+ },
+ "workerMse": true,
+ "sources": 1,
+ "buffers": [
+  {
+   "mime": "audio/mp4; codecs=\"mp4a.40.2\"",
+   "source": 0,
+   "audio": true,
+   "appends": 166,
+   "bytes": 1132180,
+   "starts": [
+    "ftyp,moov",
+    "moof,mdat",
+    "moof,mdat",
+    "moof,mdat",
+    "moof,mdat",
+    "(mid-box)",
+    "(mid-box)",
+    "(mid-box)",
+    "G45p",
+    "EURc",
+    "sWtC"
+   ],
+   "offsets": [
+    0
+   ],
+   "modes": [
+    "segments"
+   ],
+   "windows": [
+    "0-Infinity"
+   ],
+   "changeType": [],
+   "removes": 0,
+   "aborts": 0,
+   "buffered": [
+    {
+     "after": 2,
+     "ranges": []
+    },
+    {
+     "after": 3,
+     "ranges": [
+      [
+       0,
+       9.9846
+      ]
+     ]
+    },
+    {
+     "after": 4,
+     "ranges": [
+      [
+       0,
+       19.9692
+      ]
+     ]
+    },
+    {
+     "after": 4,
+     "ranges": [
+      [
+       0,
+       29.9537
+      ]
+     ]
+    },
+    {
+     "after": 5,
+     "ranges": [
+      [
+       0,
+       30.1395
+      ]
+     ]
+    },
+    {
+     "after": 7,
+     "ranges": [
+      [
+       0,
+       30.2324
+      ]
+     ]
+    }
+   ],
+   "pending": null,
+   "file": "results/yt-aac-chrome-0.bin",
+   "demuxed": {
+    "tracks": [
+     {
+      "id": 1,
+      "handler": "soun",
+      "timescale": 44100,
+      "codec": "mp4a.40.2",
+      "edit": null,
+      "encrypted": false,
+      "channels": 2,
+      "sampleRate": 44100,
+      "objectType": 64,
+      "format": "mp4a",
+      "description": "12100000000000000000000000000000"
+     }
+    ],
+    "samples": 3010,
+    "firstRaw": 0,
+    "first": 0,
+    "last": 69.8688,
+    "jumps": [],
+    "counts": {
+     "moofs": 7,
+     "samples": 3010,
+     "skipped": 0,
+     "boxes": {
+      "ftyp": 1,
+      "moov": 1,
+      "moof": 7,
+      "mdat": 7
+     }
+    }
+   },
+   "afterOffsets": [
+    null,
+    0
+   ]
+  },
+  {
+   "mime": "video/mp4; codecs=\"avc1.4D401E\"",
+   "source": 0,
+   "audio": false,
+   "appends": 275,
+   "bytes": 3110291,
+   "starts": [
+    "ftyp,moov",
+    "moof,mdat",
+    "moof,mdat",
+    "moof,mdat",
+    "moof,mdat",
+    "ftyp,moov",
+    "moof,mdat",
+    "(mid-box)",
+    "UN1X",
+    "NJRe"
+   ],
+   "offsets": [
+    0
+   ],
+   "modes": [
+    "segments"
+   ],
+   "windows": [
+    "0-Infinity"
+   ],
+   "changeType": [],
+   "removes": 0,
+   "aborts": 0,
+   "buffered": [
+    {
+     "after": 1,
+     "ranges": []
+    },
+    {
+     "after": 2,
+     "ranges": [
+      [
+       0,
+       5.0667
+      ]
+     ]
+    },
+    {
+     "after": 3,
+     "ranges": [
+      [
+       0,
+       10.1333
+      ]
+     ]
+    },
+    {
+     "after": 5,
+     "ranges": [
+      [
+       0,
+       15.2
+      ]
+     ]
+    },
+    {
+     "after": 5,
+     "ranges": [
+      [
+       0,
+       20.2667
+      ]
+     ]
+    },
+    {
+     "after": 6,
+     "ranges": [
+      [
+       0,
+       20.2667
+      ]
+     ]
+    }
+   ],
+   "kept": []
+  }
+ ],
+ "drm": [],
+ "setMediaKeys": 0,
+ "ahead": [
+  39.9,
+  30.8
+ ],
+ "ok": true
+}

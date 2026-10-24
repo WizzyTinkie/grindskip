@@ -4,6 +4,8 @@
 import { canAnalyse, createAnalysis } from './analysis.js';
 
 const HELLO = 'grindskip:lookahead';
+// The page sends these: numbers only
+const num = (x, otherwise) => (typeof x === 'number' && !Number.isNaN(x) ? x : otherwise);
 
 // createStream(): a Silero stream of its own for each analysis
 export function createFeed(createStream) {
@@ -20,12 +22,24 @@ export function createFeed(createStream) {
       if (analyses.has(m.buffer)) return;
       const supported = canAnalyse(m.mime);
       analyses.set(m.buffer, { mime: m.mime, analysis: supported ? createAnalysis(m.mime, createStream()) : null });
+    } else if (m?.type === 'mime') {
+      const entry = analyses.get(m.buffer);
+      if (!entry) return;
+      entry.mime = m.mime;
+      if (!canAnalyse(m.mime)) {
+        entry.analysis?.stop();
+        entry.analysis = null;
+      } else if (entry.analysis) {
+        entry.analysis.changeType(m.mime);
+      } else {
+        entry.analysis = createAnalysis(m.mime, createStream());
+      }
     } else if (m?.type === 'append') {
       // A copy of our own: in Firefox the message's arrays may belong to
       // the page
       const bytes = new Uint8Array(m.bytes.length);
       bytes.set(m.bytes);
-      analyses.get(m.buffer)?.analysis?.push(bytes, m.init);
+      analyses.get(m.buffer)?.analysis?.push(bytes, { init: !!m.init, offset: num(m.offset, 0), windowStart: num(m.windowStart, 0), windowEnd: num(m.windowEnd, Infinity) });
     } else if (m?.type === 'gap') {
       analyses.get(m.buffer)?.analysis?.gap();
     }

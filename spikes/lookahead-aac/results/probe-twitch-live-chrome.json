@@ -1,0 +1,20 @@
+{
+ "browser": "chrome",
+ "version": "Chrome/155.0.8059.79",
+ "target": "twitch-live",
+ "url": "https://www.twitch.tv/jynxzi",
+ "cookies": false,
+ "video": {
+  "t": 14.98,
+  "paused": false,
+  "src": "",
+  "srcObject": "MediaSourceHandle"
+ },
+ "workerMse": true,
+ "sources": 0,
+ "buffers": [],
+ "drm": [],
+ "setMediaKeys": 0,
+ "ahead": [],
+ "ok": true
+}

@@ -1,0 +1,9 @@
+{
+ "browser": "firefox",
+ "version": "firefox/158.0.1",
+ "target": "ct24.ceskatelevize.cz",
+ "url": "https://ct24.ceskatelevize.cz/",
+ "cookies": false,
+ "ok": false,
+ "error": "TimeoutError: Waiting failed: 45000ms exceeded"
+}

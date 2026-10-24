@@ -1,0 +1,239 @@
+{
+ "browser": "firefox",
+ "version": "firefox/158.0.1",
+ "target": "twitch-live",
+ "url": "https://www.twitch.tv/jynxzi",
+ "cookies": false,
+ "video": {
+  "t": 14.29,
+  "paused": false,
+  "src": "blob:https://www.twitch.tv/4f4",
+  "srcObject": null
+ },
+ "workerMse": false,
+ "sources": 1,
+ "buffers": [
+  {
+   "mime": "video/mp4;codecs=\"mp4a.40.2\"",
+   "source": 0,
+   "audio": true,
+   "appends": 405,
+   "bytes": 362135,
+   "starts": [
+    "ftyp,moov,moof,mdat",
+    "moof,mdat,moof,mdat",
+    "moof,mdat,moof,mdat",
+    "moof,mdat,moof,mdat",
+    "moof,mdat,moof,mdat",
+    "moof,mdat,moof,mdat",
+    "moof,mdat",
+    "moof,mdat,moof,mdat"
+   ],
+   "offsets": [
+    0
+   ],
+   "modes": [
+    "segments"
+   ],
+   "windows": [
+    "0-Infinity"
+   ],
+   "changeType": [],
+   "removes": 0,
+   "aborts": 0,
+   "buffered": [
+    {
+     "after": 1,
+     "ranges": [
+      [
+       0.0187,
+       0.1893
+      ]
+     ]
+    },
+    {
+     "after": 2,
+     "ranges": [
+      [
+       0.0187,
+       0.296
+      ]
+     ]
+    },
+    {
+     "after": 3,
+     "ranges": [
+      [
+       0.0187,
+       0.36
+      ]
+     ]
+    },
+    {
+     "after": 4,
+     "ranges": [
+      [
+       0.0187,
+       0.488
+      ]
+     ]
+    },
+    {
+     "after": 5,
+     "ranges": [
+      [
+       0.0187,
+       0.5307
+      ]
+     ]
+    },
+    {
+     "after": 6,
+     "ranges": [
+      [
+       0.0187,
+       0.5947
+      ]
+     ]
+    }
+   ],
+   "pending": null,
+   "file": "results/twitch-live-firefox-0.bin",
+   "demuxed": {
+    "tracks": [
+     {
+      "id": 1,
+      "handler": "soun",
+      "timescale": 1000000,
+      "codec": "mp4a.40.2",
+      "edit": null,
+      "encrypted": false,
+      "channels": 2,
+      "sampleRate": 48000,
+      "objectType": 64,
+      "format": "mp4a",
+      "description": "1190"
+     }
+    ],
+    "samples": 725,
+    "firstRaw": 0.0187,
+    "first": 0.0187,
+    "last": 15.4453,
+    "jumps": [
+     [
+      1.981,
+      1.984
+     ]
+    ],
+    "counts": {
+     "moofs": 725,
+     "samples": 725,
+     "skipped": 0,
+     "boxes": {
+      "ftyp": 2,
+      "moov": 2,
+      "moof": 725,
+      "mdat": 725
+     }
+    }
+   },
+   "afterOffsets": [
+    0,
+    null
+   ]
+  },
+  {
+   "mime": "video/mp4;codecs=\"avc1.4D401F\"",
+   "source": 0,
+   "audio": false,
+   "appends": 430,
+   "bytes": 5474486,
+   "starts": [
+    "ftyp,moov,moof,mdat",
+    "moof,mdat,moof,mdat",
+    "moof,mdat,moof,mdat",
+    "moof,mdat,moof,mdat",
+    "moof,mdat",
+    "moof,mdat,moof,mdat",
+    "moof,mdat",
+    "moof,mdat,moof,mdat"
+   ],
+   "offsets": [
+    0
+   ],
+   "modes": [
+    "segments"
+   ],
+   "windows": [
+    "0-Infinity"
+   ],
+   "changeType": [],
+   "removes": 0,
+   "aborts": 0,
+   "buffered": [
+    {
+     "after": 1,
+     "ranges": [
+      [
+       0,
+       0.166
+      ]
+     ]
+    },
+    {
+     "after": 2,
+     "ranges": [
+      [
+       0,
+       0.266
+      ]
+     ]
+    },
+    {
+     "after": 3,
+     "ranges": [
+      [
+       0,
+       0.333
+      ]
+     ]
+    },
+    {
+     "after": 4,
+     "ranges": [
+      [
+       0,
+       0.466
+      ]
+     ]
+    },
+    {
+     "after": 5,
+     "ranges": [
+      [
+       0,
+       0.5
+      ]
+     ]
+    },
+    {
+     "after": 6,
+     "ranges": [
+      [
+       0,
+       0.566
+      ]
+     ]
+    }
+   ],
+   "kept": []
+  }
+ ],
+ "drm": [],
+ "setMediaKeys": 0,
+ "ahead": [
+  1.2,
+  1.2
+ ],
+ "ok": true
+}

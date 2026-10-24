@@ -1,0 +1,220 @@
+{
+ "browser": "firefox",
+ "version": "firefox/158.0.1",
+ "target": "yt-opus",
+ "url": "https://www.youtube.com/watch?v=BFG1Q7zpNtE",
+ "video": {
+  "t": 30.15,
+  "paused": false,
+  "src": "blob:https://www.youtube.com/3",
+  "srcObject": null
+ },
+ "workerMse": false,
+ "sources": 1,
+ "buffers": [
+  {
+   "mime": "audio/webm; codecs=\"opus\"",
+   "source": 0,
+   "audio": true,
+   "appends": 233,
+   "bytes": 1065348,
+   "starts": [
+    "EBML",
+    "Cluster",
+    "Cluster",
+    "Cluster",
+    "(mid-box)",
+    "(mid-box)",
+    "(mid-box)",
+    "(mid-box)",
+    "v5YI",
+    "6JRv",
+    "Uuyq"
+   ],
+   "offsets": [
+    0
+   ],
+   "modes": [
+    "segments"
+   ],
+   "windows": [
+    "0-Infinity"
+   ],
+   "changeType": [],
+   "removes": 0,
+   "aborts": 0,
+   "buffered": [
+    {
+     "after": 2,
+     "ranges": [
+      [
+       0,
+       10.001
+      ]
+     ]
+    },
+    {
+     "after": 3,
+     "ranges": [
+      [
+       0,
+       20.001
+      ]
+     ]
+    },
+    {
+     "after": 3,
+     "ranges": [
+      [
+       0,
+       20.001
+      ]
+     ]
+    },
+    {
+     "after": 4,
+     "ranges": [
+      [
+       0,
+       20.041
+      ]
+     ]
+    },
+    {
+     "after": 5,
+     "ranges": [
+      [
+       0,
+       20.101
+      ]
+     ]
+    },
+    {
+     "after": 6,
+     "ranges": [
+      [
+       0,
+       20.221
+      ]
+     ]
+    }
+   ],
+   "pending": null,
+   "file": "results/yt-opus-firefox-0.bin",
+   "demuxed": {
+    "tracks": [
+     {
+      "number": 1,
+      "codec": "A_OPUS",
+      "sampleRate": 48000,
+      "channels": 2,
+      "description": "4f707573486561640102380180bb0000000000"
+     }
+    ],
+    "samples": 3000,
+    "firstRaw": 0,
+    "first": 0,
+    "last": 59.981,
+    "jumps": []
+   },
+   "afterOffsets": [
+    null,
+    0
+   ]
+  },
+  {
+   "mime": "video/mp4; codecs=\"avc1.4D401E\"",
+   "source": 0,
+   "audio": false,
+   "appends": 297,
+   "bytes": 3110291,
+   "starts": [
+    "ftyp,moov",
+    "moof,mdat",
+    "moof,mdat",
+    "moof,mdat",
+    "moof,mdat",
+    "ftyp,moov",
+    "moof,mdat",
+    "(mid-box)",
+    "GUo4"
+   ],
+   "offsets": [
+    0
+   ],
+   "modes": [
+    "segments"
+   ],
+   "windows": [
+    "0-Infinity"
+   ],
+   "changeType": [],
+   "removes": 0,
+   "aborts": 0,
+   "buffered": [
+    {
+     "after": 2,
+     "ranges": [
+      [
+       0,
+       5.0667
+      ]
+     ]
+    },
+    {
+     "after": 3,
+     "ranges": [
+      [
+       0,
+       10.1333
+      ]
+     ]
+    },
+    {
+     "after": 4,
+     "ranges": [
+      [
+       0,
+       15.2
+      ]
+     ]
+    },
+    {
+     "after": 4,
+     "ranges": [
+      [
+       0,
+       15.2
+      ]
+     ]
+    },
+    {
+     "after": 5,
+     "ranges": [
+      [
+       0,
+       20.2667
+      ]
+     ]
+    },
+    {
+     "after": 7,
+     "ranges": [
+      [
+       0,
+       20.2667
+      ]
+     ]
+    }
+   ],
+   "kept": []
+  }
+ ],
+ "drm": [],
+ "setMediaKeys": 0,
+ "ahead": [
+  29.8,
+  30.6
+ ],
+ "ok": true
+}

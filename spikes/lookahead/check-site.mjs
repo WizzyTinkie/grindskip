@@ -4,7 +4,9 @@
 // Grindskip on and prints its status every 2 s: whether it listens ahead or
 // live, the state, the speed and any note.
 //
-// Usage: node spikes/lookahead/check-site.mjs chrome|firefox <url> [--sec 20] [--play 2.5]
+// --seek T sets the video's currentTime to T halfway through.
+//
+// Usage: node spikes/lookahead/check-site.mjs chrome|firefox <url> [--sec 20] [--play 2.5] [--seek T]
 //        node spikes/lookahead/check-site.mjs chrome|firefox --twitch-live|--twitch-vod
 import { evalCmd, launch, nullSink, sleep, waitForEval } from '../../eval/lib/harness.mjs';
 
@@ -15,6 +17,7 @@ const opt = (k, d) => {
 };
 const sec = +opt('--sec', 20);
 const play = +opt('--play', 2.5);
+const seek = opt('--seek', null);
 let url = rest.find((x) => /^https?:/.test(x));
 
 const rejectCookies = (page) => page.evaluate(() => {
@@ -55,9 +58,20 @@ try {
   });
   await evalCmd(page, 'settings', { enabled: true, talkSpeed: 1, playSpeed: play });
   for (let s = 0; s < sec; s += 2) {
+    if (seek && s === Math.floor(sec / 2 / 2) * 2) {
+      await page.evaluate((t) => {
+        [...document.querySelectorAll('video')].sort((a, b) => b.clientWidth * b.clientHeight - a.clientWidth * a.clientHeight)[0].currentTime = t;
+      }, +seek);
+      console.log(`-- seek to ${seek} s`);
+    }
     await sleep(2000);
     const st = await evalCmd(page, 'status');
-    console.log(`${browserName} mode=${st.mode} where=${st.where} state=${st.state} speed=${st.speed} p=${st.p?.toFixed(2)} note=${st.note} lookahead=${JSON.stringify({ found: st.lookahead?.found, buffers: st.lookahead?.buffers })}`);
+    const la = st.lookahead;
+    const { t, muted } = await page.evaluate(() => {
+      const v = [...document.querySelectorAll('video')].sort((x, y) => y.clientWidth * y.clientHeight - x.clientWidth * x.clientHeight)[0];
+      return { t: v.currentTime, muted: v.muted };
+    });
+    console.log(`${browserName} t=${t.toFixed(1)}${muted ? ' muted' : ''} mode=${st.mode} where=${st.where} state=${st.state} speed=${st.speed} p=${st.p?.toFixed(2)} note=${st.note} found=${la?.found} buffers=${JSON.stringify(la?.buffers)} decodedUntil=${la?.decodedUntil?.toFixed(1)} ahead=${la?.ahead} steps=${la?.counts?.steps} gaps=${la?.counts?.gaps} error=${la?.error}`);
   }
 } finally {
   await browser.close();

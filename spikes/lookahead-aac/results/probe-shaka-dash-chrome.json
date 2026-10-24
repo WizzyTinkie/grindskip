@@ -1,0 +1,206 @@
+{
+ "browser": "chrome",
+ "version": "Chrome/155.0.8059.79",
+ "target": "shaka-dash",
+ "url": "http://127.0.0.1:38159/pages/player.html?lib=shaka&src=https%3A%2F%2Fstorage.googleapis.com%2Fshaka-demo-assets%2Fangel-one%2Fdash.mpd",
+ "video": {
+  "t": 14.98,
+  "paused": false,
+  "src": "blob:http://127.0.0.1:38159/9e",
+  "srcObject": null
+ },
+ "workerMse": true,
+ "sources": 1,
+ "buffers": [
+  {
+   "mime": "audio/webm; codecs=\"opus\"",
+   "source": 0,
+   "audio": true,
+   "appends": 8,
+   "bytes": 239893,
+   "starts": [
+    "EBML",
+    "Cluster",
+    "Cluster",
+    "Cluster",
+    "Cluster",
+    "Cluster",
+    "Cluster",
+    "Cluster"
+   ],
+   "offsets": [
+    0
+   ],
+   "modes": [
+    "segments"
+   ],
+   "windows": [
+    "0-60.01"
+   ],
+   "changeType": [],
+   "removes": 0,
+   "aborts": 1,
+   "buffered": [
+    {
+     "after": 1,
+     "ranges": []
+    },
+    {
+     "after": 2,
+     "ranges": [
+      [
+       0,
+       4
+      ]
+     ]
+    },
+    {
+     "after": 3,
+     "ranges": [
+      [
+       0,
+       8
+      ]
+     ]
+    },
+    {
+     "after": 4,
+     "ranges": [
+      [
+       0,
+       12
+      ]
+     ]
+    },
+    {
+     "after": 5,
+     "ranges": [
+      [
+       0,
+       16
+      ]
+     ]
+    },
+    {
+     "after": 6,
+     "ranges": [
+      [
+       0,
+       20
+      ]
+     ]
+    }
+   ],
+   "pending": null,
+   "file": "results/shaka-dash-chrome-0.bin",
+   "demuxed": {
+    "tracks": [
+     {
+      "number": 1,
+      "codec": "A_OPUS",
+      "sampleRate": 48000,
+      "channels": 2,
+      "description": "4f70757348656164010201380000bb80000000"
+     }
+    ],
+    "samples": 1400,
+    "firstRaw": 0,
+    "first": 0,
+    "last": 27.98,
+    "jumps": []
+   },
+   "afterOffsets": [
+    null,
+    0
+   ]
+  },
+  {
+   "mime": "video/webm; codecs=\"vp09.00.30.08.00.02.02.02.00\"",
+   "source": 0,
+   "audio": false,
+   "appends": 8,
+   "bytes": 2376264,
+   "starts": [
+    "EBML",
+    "Cluster",
+    "Cluster",
+    "Cluster",
+    "Cluster",
+    "Cluster",
+    "Cluster",
+    "Cluster"
+   ],
+   "offsets": [
+    0
+   ],
+   "modes": [
+    "segments"
+   ],
+   "windows": [
+    "0-60.01"
+   ],
+   "changeType": [],
+   "removes": 0,
+   "aborts": 1,
+   "buffered": [
+    {
+     "after": 1,
+     "ranges": []
+    },
+    {
+     "after": 2,
+     "ranges": [
+      [
+       0,
+       4
+      ]
+     ]
+    },
+    {
+     "after": 3,
+     "ranges": [
+      [
+       0,
+       8
+      ]
+     ]
+    },
+    {
+     "after": 4,
+     "ranges": [
+      [
+       0,
+       12
+      ]
+     ]
+    },
+    {
+     "after": 5,
+     "ranges": [
+      [
+       0,
+       16
+      ]
+     ]
+    },
+    {
+     "after": 6,
+     "ranges": [
+      [
+       0,
+       20
+      ]
+     ]
+    }
+   ],
+   "kept": []
+  }
+ ],
+ "drm": [],
+ "setMediaKeys": 0,
+ "ahead": [
+  13,
+  13
+ ],
+ "ok": true
+}

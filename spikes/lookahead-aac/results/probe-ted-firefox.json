@@ -1,0 +1,234 @@
+{
+ "browser": "firefox",
+ "version": "firefox/158.0.1",
+ "target": "ted",
+ "url": "https://www.ted.com/talks/sir_ken_robinson_do_schools_kill_creativity",
+ "cookies": false,
+ "video": {
+  "t": 14.85,
+  "paused": false,
+  "src": "blob:https://www.ted.com/cde83",
+  "srcObject": null
+ },
+ "workerMse": false,
+ "sources": 1,
+ "buffers": [
+  {
+   "mime": "video/mp4;codecs=avc1.64001f",
+   "source": 0,
+   "audio": false,
+   "appends": 525,
+   "bytes": 55134275,
+   "starts": [
+    "ftyp,moov",
+    "moof,mdat",
+    "moof,mdat",
+    "moof,mdat",
+    "moof,mdat",
+    "moof,mdat",
+    "ftyp,moov",
+    "moof,mdat"
+   ],
+   "offsets": [
+    0,
+    -0.0176,
+    -95440.165
+   ],
+   "modes": [
+    "segments"
+   ],
+   "windows": [
+    "0-Infinity"
+   ],
+   "changeType": [],
+   "removes": 0,
+   "aborts": 0,
+   "buffered": [
+    {
+     "after": 1,
+     "ranges": []
+    },
+    {
+     "after": 2,
+     "ranges": [
+      [
+       0.0834,
+       1.2513
+      ]
+     ]
+    },
+    {
+     "after": 3,
+     "ranges": [
+      [
+       0.0834,
+       2.002
+      ]
+     ]
+    },
+    {
+     "after": 4,
+     "ranges": [
+      [
+       0.0834,
+       2.9196
+      ]
+     ]
+    },
+    {
+     "after": 5,
+     "ranges": [
+      [
+       0.0834,
+       3.5452
+      ]
+     ]
+    },
+    {
+     "after": 6,
+     "ranges": [
+      [
+       0.0834,
+       3.5869
+      ]
+     ]
+    }
+   ],
+   "kept": []
+  },
+  {
+   "mime": "audio/mp4;codecs=mp4a.40.2",
+   "source": 0,
+   "audio": true,
+   "appends": 154,
+   "bytes": 7635481,
+   "starts": [
+    "ftyp,moov",
+    "moof,mdat",
+    "moof,mdat",
+    "ftyp,moov",
+    "moof,mdat",
+    "moof,mdat",
+    "moof,mdat",
+    "moof,mdat"
+   ],
+   "offsets": [
+    0,
+    -0.0176,
+    -95440.165
+   ],
+   "modes": [
+    "segments"
+   ],
+   "windows": [
+    "0-Infinity"
+   ],
+   "changeType": [],
+   "removes": 0,
+   "aborts": 0,
+   "buffered": [
+    {
+     "after": 1,
+     "ranges": []
+    },
+    {
+     "after": 2,
+     "ranges": [
+      [
+       0,
+       3.5664
+      ]
+     ]
+    },
+    {
+     "after": 3,
+     "ranges": [
+      [
+       0,
+       3.6129
+      ]
+     ]
+    },
+    {
+     "after": 4,
+     "ranges": [
+      [
+       0,
+       3.6129
+      ]
+     ]
+    },
+    {
+     "after": 5,
+     "ranges": [
+      [
+       0,
+       9.5283
+      ]
+     ]
+    },
+    {
+     "after": 6,
+     "ranges": [
+      [
+       0,
+       9.6676
+      ]
+     ]
+    }
+   ],
+   "pending": null,
+   "file": "results/ted-firefox-1.bin",
+   "demuxed": {
+    "tracks": [
+     {
+      "id": 2,
+      "handler": "soun",
+      "timescale": 44100,
+      "codec": "mp4a.40.2",
+      "edit": null,
+      "encrypted": false,
+      "channels": 2,
+      "sampleRate": 44100,
+      "objectType": 64,
+      "format": "mp4a",
+      "description": "1210"
+     }
+    ],
+    "samples": 8162,
+    "firstRaw": 0.0081,
+    "first": -0.0095,
+    "last": 189.483,
+    "jumps": [
+     [
+      3.59,
+      3.607
+     ]
+    ],
+    "counts": {
+     "moofs": 63,
+     "samples": 8162,
+     "skipped": 0,
+     "boxes": {
+      "ftyp": 2,
+      "moov": 2,
+      "moof": 63,
+      "mdat": 63
+     }
+    }
+   },
+   "afterOffsets": [
+    0,
+    -0.0176,
+    -95440.165
+   ]
+  }
+ ],
+ "drm": [],
+ "setMediaKeys": 0,
+ "ahead": [
+  439.1,
+  438.8
+ ],
+ "ok": true
+}

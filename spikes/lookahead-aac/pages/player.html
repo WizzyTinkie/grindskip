@@ -1,0 +1,39 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>player</title>
+<!-- One of the common Media Source players on a public test stream:
+     ?lib=hls|shaka|dash|videojs&src=<stream URL> -->
+<video id="v" width="640" height="360" muted autoplay playsinline></video>
+<script>
+  const q = new URLSearchParams(location.search);
+  const lib = q.get('lib');
+  const src = q.get('src');
+  const LIBS = {
+    hls: 'https://cdn.jsdelivr.net/npm/hls.js@1.5.17/dist/hls.min.js',
+    shaka: 'https://cdn.jsdelivr.net/npm/shaka-player@4.12.6/dist/shaka-player.compiled.js',
+    dash: 'https://cdn.jsdelivr.net/npm/dashjs@4.7.4/dist/dash.all.min.js',
+    videojs: 'https://cdn.jsdelivr.net/npm/video.js@8.17.4/dist/video.min.js',
+  };
+  const s = document.createElement('script');
+  s.src = LIBS[lib];
+  s.onload = async () => {
+    const v = document.getElementById('v');
+    if (lib === 'hls') {
+      const h = new Hls();
+      h.loadSource(src);
+      h.attachMedia(v);
+    } else if (lib === 'shaka') {
+      shaka.polyfill.installAll();
+      const p = new shaka.Player();
+      await p.attach(v);
+      await p.load(src);
+    } else if (lib === 'dash') {
+      dashjs.MediaPlayer().create().initialize(v, src, true);
+    } else if (lib === 'videojs') {
+      const p = videojs(v);
+      p.src({ src, type: 'application/x-mpegURL' });
+    }
+    v.play().catch(() => {});
+  };
+  document.head.append(s);
+</script>

@@ -1,0 +1,224 @@
+{
+ "browser": "firefox",
+ "version": "firefox/158.0.1",
+ "target": "dashjs",
+ "url": "http://127.0.0.1:36561/pages/player.html?lib=dash&src=https%3A%2F%2Fdash.akamaized.net%2Fakamai%2Fbbb_30fps%2Fbbb_30fps.mpd",
+ "video": {
+  "t": 15.04,
+  "paused": false,
+  "src": "blob:http://127.0.0.1:36561/1d",
+  "srcObject": null
+ },
+ "workerMse": false,
+ "sources": 1,
+ "buffers": [
+  {
+   "mime": "video/mp4;codecs=\"avc1.64000d\"",
+   "source": 0,
+   "audio": false,
+   "appends": 21,
+   "bytes": 108120532,
+   "starts": [
+    "ftyp,moov",
+    "styp,sidx,moof,mdat",
+    "ftyp,moov",
+    "styp,sidx,moof,mdat",
+    "styp,sidx,moof,mdat",
+    "styp,sidx,moof,mdat",
+    "styp,sidx,moof,mdat",
+    "styp,sidx,moof,mdat"
+   ],
+   "offsets": [
+    0
+   ],
+   "modes": [
+    "segments"
+   ],
+   "windows": [
+    "0-634.576"
+   ],
+   "changeType": [],
+   "removes": 0,
+   "aborts": 0,
+   "buffered": [
+    {
+     "after": 1,
+     "ranges": []
+    },
+    {
+     "after": 2,
+     "ranges": [
+      [
+       0,
+       4
+      ]
+     ]
+    },
+    {
+     "after": 3,
+     "ranges": [
+      [
+       0,
+       4
+      ]
+     ]
+    },
+    {
+     "after": 4,
+     "ranges": [
+      [
+       0,
+       8
+      ]
+     ]
+    },
+    {
+     "after": 5,
+     "ranges": [
+      [
+       0,
+       12
+      ]
+     ]
+    },
+    {
+     "after": 6,
+     "ranges": [
+      [
+       0,
+       16
+      ]
+     ]
+    }
+   ],
+   "kept": []
+  },
+  {
+   "mime": "audio/mp4;codecs=\"mp4a.40.5\"",
+   "source": 0,
+   "audio": true,
+   "appends": 21,
+   "bytes": 668438,
+   "starts": [
+    "ftyp,moov",
+    "styp,sidx,moof,mdat",
+    "styp,sidx,moof,mdat",
+    "styp,sidx,moof,mdat",
+    "styp,sidx,moof,mdat",
+    "styp,sidx,moof,mdat",
+    "styp,sidx,moof,mdat",
+    "styp,sidx,moof,mdat"
+   ],
+   "offsets": [
+    0
+   ],
+   "modes": [
+    "segments"
+   ],
+   "windows": [
+    "0-634.576"
+   ],
+   "changeType": [],
+   "removes": 0,
+   "aborts": 0,
+   "buffered": [
+    {
+     "after": 1,
+     "ranges": []
+    },
+    {
+     "after": 2,
+     "ranges": [
+      [
+       0,
+       4.0107
+      ]
+     ]
+    },
+    {
+     "after": 3,
+     "ranges": [
+      [
+       0,
+       8.0213
+      ]
+     ]
+    },
+    {
+     "after": 4,
+     "ranges": [
+      [
+       0,
+       12.032
+      ]
+     ]
+    },
+    {
+     "after": 5,
+     "ranges": [
+      [
+       0,
+       16.0427
+      ]
+     ]
+    },
+    {
+     "after": 6,
+     "ranges": [
+      [
+       0,
+       20.0533
+      ]
+     ]
+    }
+   ],
+   "pending": null,
+   "file": "results/dashjs-firefox-1.bin",
+   "demuxed": {
+    "tracks": [
+     {
+      "id": 1,
+      "handler": "soun",
+      "timescale": 48000,
+      "codec": "mp4a.40.5",
+      "edit": null,
+      "encrypted": false,
+      "channels": 2,
+      "sampleRate": 48000,
+      "objectType": 64,
+      "format": "mp4a",
+      "description": "2b118800"
+     }
+    ],
+    "samples": 1880,
+    "firstRaw": 0,
+    "first": 0,
+    "last": 80.1707,
+    "jumps": [],
+    "counts": {
+     "moofs": 20,
+     "samples": 1880,
+     "skipped": 0,
+     "boxes": {
+      "ftyp": 1,
+      "moov": 1,
+      "styp": 20,
+      "sidx": 20,
+      "moof": 20,
+      "mdat": 20
+     }
+    }
+   },
+   "afterOffsets": [
+    0
+   ]
+  }
+ ],
+ "drm": [],
+ "setMediaKeys": 0,
+ "ahead": [
+  61,
+  65.2
+ ],
+ "ok": true
+}

@@ -1,0 +1,30 @@
+{
+ "browser": "chrome",
+ "version": "Chrome/155.0.8059.79",
+ "target": "kick-live",
+ "url": "https://kick.com/",
+ "cookies": true,
+ "video": {
+  "t": 17.45,
+  "paused": false,
+  "src": "",
+  "srcObject": "MediaSourceHandle"
+ },
+ "workerMse": true,
+ "sources": 0,
+ "buffers": [],
+ "drm": [
+  "com.widevine.alpha",
+  "com.microsoft.playready",
+  "webkit-org.w3.clearkey",
+  "com.adobe.primetime",
+  "com.apple.fairplay",
+  "com.youtube.playready",
+  "org.w3.clearkey",
+  "com.adobe.access",
+  "com.widevine.alpha"
+ ],
+ "setMediaKeys": 0,
+ "ahead": [],
+ "ok": true
+}

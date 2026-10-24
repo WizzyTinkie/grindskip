@@ -1,0 +1,29 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>muxed</title>
+<!-- ?src=<fragmented MP4 with video and audio>&codecs=<its codecs>: appends
+     it to one SourceBuffer in 64 KB pieces, keeping 10 s ahead, as Twitch's
+     player does with some streams -->
+<video id="v" width="640" height="360" muted autoplay playsinline></video>
+<script>
+  const q = new URLSearchParams(location.search);
+  const video = document.getElementById('v');
+  const ms = new MediaSource();
+  video.src = URL.createObjectURL(ms);
+  ms.addEventListener('sourceopen', async () => {
+    const bytes = new Uint8Array(await (await fetch(q.get('src'))).arrayBuffer());
+    const sb = ms.addSourceBuffer(`video/mp4; codecs="${q.get('codecs')}"`);
+    const done = () => new Promise((ok) => sb.addEventListener('updateend', ok, { once: true }));
+    let pos = 0;
+    for (;;) {
+      const end = sb.buffered.length ? sb.buffered.end(sb.buffered.length - 1) : 0;
+      if (pos < bytes.length && end - video.currentTime < 10) {
+        sb.appendBuffer(bytes.subarray(pos, pos + 64 * 1024));
+        pos += 64 * 1024;
+        await done();
+      } else {
+        await new Promise((ok) => setTimeout(ok, 200));
+      }
+    }
+  });
+</script>
