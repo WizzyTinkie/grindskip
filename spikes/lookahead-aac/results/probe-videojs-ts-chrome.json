@@ -1,0 +1,228 @@
+{
+ "browser": "chrome",
+ "version": "Chrome/155.0.8059.79",
+ "target": "videojs-ts",
+ "url": "http://127.0.0.1:35925/pages/player.html?lib=videojs&src=https%3A%2F%2Ftest-streams.mux.dev%2Fx36xhzz%2Fx36xhzz.m3u8",
+ "video": {
+  "t": 15.01,
+  "paused": false,
+  "src": "blob:http://127.0.0.1:35925/31",
+  "srcObject": null
+ },
+ "workerMse": true,
+ "sources": 1,
+ "buffers": [
+  {
+   "mime": "video/mp4;codecs=\"avc1.42000d\"",
+   "source": 0,
+   "audio": false,
+   "appends": 6,
+   "bytes": 1320158,
+   "starts": [
+    "ftyp,moov,moof,mdat",
+    "moof,mdat",
+    "moof,mdat",
+    "moof,mdat",
+    "moof,mdat",
+    "moof,mdat"
+   ],
+   "offsets": [
+    -10
+   ],
+   "modes": [
+    "segments"
+   ],
+   "windows": [
+    "0-Infinity"
+   ],
+   "changeType": [],
+   "removes": 0,
+   "aborts": 0,
+   "buffered": [
+    {
+     "after": 1,
+     "ranges": [
+      [
+       0,
+       10
+      ]
+     ]
+    },
+    {
+     "after": 2,
+     "ranges": [
+      [
+       0,
+       20
+      ]
+     ]
+    },
+    {
+     "after": 3,
+     "ranges": [
+      [
+       0,
+       30
+      ]
+     ]
+    },
+    {
+     "after": 4,
+     "ranges": [
+      [
+       0,
+       40
+      ]
+     ]
+    },
+    {
+     "after": 5,
+     "ranges": [
+      [
+       0,
+       50
+      ]
+     ]
+    },
+    {
+     "after": 6,
+     "ranges": [
+      [
+       0,
+       60
+      ]
+     ]
+    }
+   ],
+   "kept": []
+  },
+  {
+   "mime": "audio/mp4;codecs=\"mp4a.40.5\"",
+   "source": 0,
+   "audio": true,
+   "appends": 6,
+   "bytes": 491723,
+   "starts": [
+    "ftyp,moov,moof,mdat",
+    "moof,mdat",
+    "moof,mdat",
+    "moof,mdat",
+    "moof,mdat",
+    "moof,mdat"
+   ],
+   "offsets": [
+    -10
+   ],
+   "modes": [
+    "segments"
+   ],
+   "windows": [
+    "0-Infinity"
+   ],
+   "changeType": [],
+   "removes": 0,
+   "aborts": 0,
+   "buffered": [
+    {
+     "after": 1,
+     "ranges": [
+      [
+       0,
+       10.031
+      ]
+     ]
+    },
+    {
+     "after": 2,
+     "ranges": [
+      [
+       0,
+       20.0156
+      ]
+     ]
+    },
+    {
+     "after": 3,
+     "ranges": [
+      [
+       0,
+       30.0001
+      ]
+     ]
+    },
+    {
+     "after": 4,
+     "ranges": [
+      [
+       0,
+       40.0312
+      ]
+     ]
+    },
+    {
+     "after": 5,
+     "ranges": [
+      [
+       0,
+       50.0157
+      ]
+     ]
+    },
+    {
+     "after": 6,
+     "ranges": [
+      [
+       0,
+       60.0003
+      ]
+     ]
+    }
+   ],
+   "pending": null,
+   "file": "results/videojs-ts-chrome-1.bin",
+   "demuxed": {
+    "tracks": [
+     {
+      "id": 257,
+      "handler": "soun",
+      "timescale": 22050,
+      "codec": "mp4a.40.2",
+      "edit": null,
+      "encrypted": false,
+      "channels": 2,
+      "sampleRate": 22050,
+      "objectType": 64,
+      "format": "mp4a",
+      "description": "1390"
+     }
+    ],
+    "samples": 1292,
+    "firstRaw": 10,
+    "first": 0,
+    "last": 59.9539,
+    "jumps": [],
+    "counts": {
+     "moofs": 6,
+     "samples": 1292,
+     "skipped": 0,
+     "boxes": {
+      "ftyp": 1,
+      "moov": 1,
+      "moof": 6,
+      "mdat": 6
+     }
+    }
+   },
+   "afterOffsets": [
+    -10
+   ]
+  }
+ ],
+ "drm": [],
+ "setMediaKeys": 0,
+ "ahead": [
+  45,
+  45
+ ],
+ "ok": true
+}

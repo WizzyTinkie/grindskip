@@ -1,0 +1,28 @@
+{
+ "userAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/155.0.0.0 Safari/537.36",
+ "decoder": {
+  "AAC-LC 44.1 kHz stereo": true,
+  "AAC-LC 48 kHz stereo": true,
+  "AAC-LC 48 kHz 5.1": true,
+  "AAC-LC, no description (ADTS)": true,
+  "HE-AAC v1 (SBR) 24/48 kHz": true,
+  "HE-AAC v2 (PS) 24/48 kHz": true,
+  "Opus 48 kHz stereo": true,
+  "MP3": true,
+  "FLAC": "throws: TypeError",
+  "AC-3": false,
+  "E-AC-3": false
+ },
+ "mse": {
+  "audio/mp4; codecs=\"mp4a.40.2\"": true,
+  "audio/mp4; codecs=\"mp4a.40.5\"": true,
+  "audio/mp4; codecs=\"mp4a.40.29\"": true,
+  "audio/mp4; codecs=\"opus\"": true,
+  "audio/mp4; codecs=\"flac\"": true,
+  "audio/mp4; codecs=\"ec-3\"": false,
+  "audio/mpeg": true,
+  "audio/aac": true,
+  "audio/webm; codecs=\"opus\"": true,
+  "video/mp4; codecs=\"avc1.42E01E,mp4a.40.2\"": true
+ }
+}

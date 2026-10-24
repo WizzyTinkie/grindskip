@@ -1,0 +1,227 @@
+{
+ "browser": "chrome",
+ "version": "Chrome/155.0.8059.79",
+ "target": "hlsjs-fmp4",
+ "url": "http://127.0.0.1:34355/pages/player.html?lib=hls&src=https%3A%2F%2Fdevstreaming-cdn.apple.com%2Fvideos%2Fstreaming%2Fexamples%2Fimg_bipbop_adv_example_fmp4%2Fmaster.m3u8",
+ "video": {
+  "t": 14.98,
+  "paused": false,
+  "src": "blob:http://127.0.0.1:34355/b6",
+  "srcObject": null
+ },
+ "workerMse": true,
+ "sources": 1,
+ "buffers": [
+  {
+   "mime": "video/mp4;codecs=avc1.64001e",
+   "source": 0,
+   "audio": false,
+   "appends": 14,
+   "bytes": 47853438,
+   "starts": [
+    "ftyp,moov",
+    "moof,mdat,moof,mdat",
+    "ftyp,moov",
+    "moof,mdat,moof,mdat",
+    "ftyp,moov",
+    "moof,mdat,moof,mdat",
+    "ftyp,moov",
+    "moof,mdat,moof,mdat"
+   ],
+   "offsets": [
+    0
+   ],
+   "modes": [
+    "segments"
+   ],
+   "windows": [
+    "0-Infinity"
+   ],
+   "changeType": [],
+   "removes": 0,
+   "aborts": 0,
+   "buffered": [
+    {
+     "after": 1,
+     "ranges": []
+    },
+    {
+     "after": 2,
+     "ranges": [
+      [
+       0.0333,
+       6.0333
+      ]
+     ]
+    },
+    {
+     "after": 3,
+     "ranges": [
+      [
+       0.0333,
+       6.0333
+      ]
+     ]
+    },
+    {
+     "after": 4,
+     "ranges": [
+      [
+       0.0333,
+       12.0167
+      ]
+     ]
+    },
+    {
+     "after": 5,
+     "ranges": [
+      [
+       0.0333,
+       12.0167
+      ]
+     ]
+    },
+    {
+     "after": 6,
+     "ranges": [
+      [
+       0.0333,
+       18.0167
+      ]
+     ]
+    }
+   ],
+   "kept": []
+  },
+  {
+   "mime": "audio/mp4;codecs=mp4a.40.2",
+   "source": 0,
+   "audio": true,
+   "appends": 11,
+   "bytes": 1212506,
+   "starts": [
+    "ftyp,moov",
+    "moof,mdat",
+    "moof,mdat",
+    "moof,mdat",
+    "moof,mdat",
+    "moof,mdat",
+    "moof,mdat",
+    "moof,mdat"
+   ],
+   "offsets": [
+    0
+   ],
+   "modes": [
+    "segments"
+   ],
+   "windows": [
+    "0-Infinity"
+   ],
+   "changeType": [],
+   "removes": 0,
+   "aborts": 0,
+   "buffered": [
+    {
+     "after": 1,
+     "ranges": []
+    },
+    {
+     "after": 2,
+     "ranges": [
+      [
+       0,
+       5.9947
+      ]
+     ]
+    },
+    {
+     "after": 3,
+     "ranges": [
+      [
+       0,
+       11.9453
+      ]
+     ]
+    },
+    {
+     "after": 4,
+     "ranges": [
+      [
+       0,
+       17.94
+      ]
+     ]
+    },
+    {
+     "after": 5,
+     "ranges": [
+      [
+       0,
+       23.9347
+      ]
+     ]
+    },
+    {
+     "after": 6,
+     "ranges": [
+      [
+       0,
+       29.9293
+      ]
+     ]
+    }
+   ],
+   "pending": null,
+   "file": "results/hlsjs-fmp4-chrome-1.bin",
+   "demuxed": {
+    "tracks": [
+     {
+      "id": 1,
+      "handler": "soun",
+      "timescale": 48000,
+      "codec": "mp4a.40.2",
+      "edit": null,
+      "encrypted": false,
+      "channels": 2,
+      "sampleRate": 48000,
+      "objectType": 64,
+      "format": "mp4a",
+      "description": "1190"
+     }
+    ],
+    "samples": 2810,
+    "firstRaw": 0,
+    "first": 0,
+    "last": 59.8813,
+    "jumps": [
+     [
+      5.973,
+      5.951
+     ]
+    ],
+    "counts": {
+     "moofs": 10,
+     "samples": 2810,
+     "skipped": 0,
+     "boxes": {
+      "ftyp": 1,
+      "moov": 1,
+      "moof": 10,
+      "mdat": 10
+     }
+    }
+   },
+   "afterOffsets": [
+    0
+   ]
+  }
+ ],
+ "drm": [],
+ "setMediaKeys": 0,
+ "ahead": [
+  45,
+  44.9
+ ],
+ "ok": true
+}

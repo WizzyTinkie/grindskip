@@ -1,0 +1,249 @@
+{
+ "browser": "firefox",
+ "version": "firefox/158.0.1",
+ "target": "kick-live",
+ "url": "https://kick.com/",
+ "cookies": true,
+ "video": {
+  "t": 17.85,
+  "paused": false,
+  "src": "blob:https://kick.com/2f057c51",
+  "srcObject": null
+ },
+ "workerMse": false,
+ "sources": 1,
+ "buffers": [
+  {
+   "mime": "video/mp4;codecs=\"mp4a.40.2\"",
+   "source": 0,
+   "audio": true,
+   "appends": 633,
+   "bytes": 456150,
+   "starts": [
+    "ftyp,moov,moof,mdat",
+    "moof,mdat,moof,mdat",
+    "moof,mdat,moof,mdat",
+    "moof,mdat,moof,mdat",
+    "moof,mdat,moof,mdat",
+    "moof,mdat,moof,mdat",
+    "moof,mdat,moof,mdat",
+    "moof,mdat,moof,mdat",
+    "moof,mdat"
+   ],
+   "offsets": [
+    0
+   ],
+   "modes": [
+    "segments"
+   ],
+   "windows": [
+    "0-Infinity"
+   ],
+   "changeType": [],
+   "removes": 0,
+   "aborts": 0,
+   "buffered": [
+    {
+     "after": 1,
+     "ranges": [
+      [
+       0.0167,
+       0.166
+      ]
+     ]
+    },
+    {
+     "after": 2,
+     "ranges": [
+      [
+       0.0167,
+       0.5287
+      ]
+     ]
+    },
+    {
+     "after": 3,
+     "ranges": [
+      [
+       0.0167,
+       0.7207
+      ]
+     ]
+    },
+    {
+     "after": 4,
+     "ranges": [
+      [
+       0.0167,
+       0.9127
+      ]
+     ]
+    },
+    {
+     "after": 5,
+     "ranges": [
+      [
+       0.0167,
+       1.0833
+      ]
+     ]
+    },
+    {
+     "after": 6,
+     "ranges": [
+      [
+       0.0167,
+       1.2327
+      ]
+     ]
+    }
+   ],
+   "pending": null,
+   "file": "results/kick-live-firefox-0.bin",
+   "demuxed": {
+    "tracks": [
+     {
+      "id": 1,
+      "handler": "soun",
+      "timescale": 1000000,
+      "codec": "mp4a.40.2",
+      "edit": null,
+      "encrypted": false,
+      "channels": 2,
+      "sampleRate": 48000,
+      "objectType": 64,
+      "format": "mp4a",
+      "description": "1190"
+     }
+    ],
+    "samples": 913,
+    "firstRaw": 0.0167,
+    "first": 0.0167,
+    "last": 19.456,
+    "jumps": [
+     [
+      1.979,
+      1.984
+     ]
+    ],
+    "counts": {
+     "moofs": 913,
+     "samples": 913,
+     "skipped": 0,
+     "boxes": {
+      "ftyp": 2,
+      "moov": 2,
+      "moof": 913,
+      "mdat": 913
+     }
+    }
+   },
+   "afterOffsets": [
+    0,
+    null
+   ]
+  },
+  {
+   "mime": "video/mp4;codecs=\"avc1.4D401F\"",
+   "source": 0,
+   "audio": false,
+   "appends": 699,
+   "bytes": 16660127,
+   "starts": [
+    "ftyp,moov,moof,mdat",
+    "moof,mdat,moof,mdat",
+    "moof,mdat,moof,mdat",
+    "moof,mdat,moof,mdat",
+    "moof,mdat,moof,mdat",
+    "moof,mdat,moof,mdat",
+    "moof,mdat,moof,mdat",
+    "moof,mdat,moof,mdat",
+    "moof,mdat"
+   ],
+   "offsets": [
+    0
+   ],
+   "modes": [
+    "segments"
+   ],
+   "windows": [
+    "0-Infinity"
+   ],
+   "changeType": [],
+   "removes": 0,
+   "aborts": 0,
+   "buffered": [
+    {
+     "after": 1,
+     "ranges": [
+      [
+       0,
+       0.134
+      ]
+     ]
+    },
+    {
+     "after": 2,
+     "ranges": [
+      [
+       0,
+       0.467
+      ]
+     ]
+    },
+    {
+     "after": 3,
+     "ranges": [
+      [
+       0,
+       0.701
+      ]
+     ]
+    },
+    {
+     "after": 4,
+     "ranges": [
+      [
+       0,
+       0.901
+      ]
+     ]
+    },
+    {
+     "after": 5,
+     "ranges": [
+      [
+       0,
+       1.067
+      ]
+     ]
+    },
+    {
+     "after": 6,
+     "ranges": [
+      [
+       0,
+       1.201
+      ]
+     ]
+    }
+   ],
+   "kept": []
+  }
+ ],
+ "drm": [
+  "com.microsoft.playready",
+  "webkit-org.w3.clearkey",
+  "com.adobe.primetime",
+  "com.apple.fairplay",
+  "com.youtube.playready",
+  "org.w3.clearkey",
+  "com.adobe.access"
+ ],
+ "setMediaKeys": 0,
+ "ahead": [
+  1.6,
+  1.6
+ ],
+ "ok": true
+}

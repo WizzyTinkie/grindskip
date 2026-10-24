@@ -1,0 +1,9 @@
+{
+ "browser": "chrome",
+ "version": "Chrome/155.0.8059.79",
+ "target": "ct24.ceskatelevize.cz",
+ "url": "https://ct24.ceskatelevize.cz/",
+ "cookies": false,
+ "ok": false,
+ "error": "TimeoutError: Waiting failed: 45000ms exceeded"
+}
