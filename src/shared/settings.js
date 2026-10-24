@@ -23,6 +23,7 @@ export const DEFAULTS = Object.freeze({
   sensitivity: 0,     // higher: quieter or less clear speech also counts
   lookahead: true,    // analyse the audio before it plays, where the player streams it
   overlay: false,     // show the speech meter on the page
+  debug: false,       // show the debug tools (the popup's debug recording); set in the options page
 });
 
 // Turns whatever was stored (nothing, an older version, values out of range)
@@ -32,7 +33,7 @@ export function migrate(stored) {
   // Version 1 is the first; later versions add their steps here, each
   // taking the object from version n to n + 1.
   const out = { ...DEFAULTS };
-  for (const key of ['enabled', 'lookahead', 'overlay']) {
+  for (const key of ['enabled', 'lookahead', 'overlay', 'debug']) {
     if (typeof s[key] === 'boolean') out[key] = s[key];
   }
   for (const [key, r] of Object.entries(RANGES)) {

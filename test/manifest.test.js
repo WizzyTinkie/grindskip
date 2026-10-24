@@ -38,6 +38,12 @@ test('both have a popup', () => {
   }
 });
 
+test('both have the options page, shown in the browser\'s add-on settings', () => {
+  for (const browser of ['chrome', 'firefox']) {
+    assert.deepEqual(manifestFor(browser, root).options_ui, { page: 'options.html', open_in_tab: false }, browser);
+  }
+});
+
 test('both have the icon in every size, for the toolbar too', () => {
   for (const browser of ['chrome', 'firefox']) {
     const m = manifestFor(browser, root);

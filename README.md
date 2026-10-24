@@ -48,11 +48,11 @@ The popup also shows the time saved on the current video and in total, compared 
 
 If you change the speed yourself, Grindskip leaves it alone on that video until you click *Change the speed again* in the popup, or the next video starts.
 
-If it slows down or speeds up when it shouldn't, *Start a debug recording* in the popup, play the part where it happens, and click *Stop and save*. That saves the audio Grindskip analysed and its decisions to a file in your downloads (at most 10 minutes). Nothing is sent anywhere; share the file only if you want to.
+If it slows down or speeds up when it shouldn't, turn on *Debug mode* in Grindskip's options (*Preferences* in Firefox's add-ons manager, *Extension options* in Chrome's), then *Start a debug recording* in the popup, play the part where it happens, and click *Stop and save*. That saves the audio Grindskip analysed and its decisions to a file in your downloads (at most 10 minutes). Nothing is sent anywhere; share the file only if you want to.
 
 ## Layout
 
-- `src/`: the extension's code, bundled by esbuild: `content/` (video, capture, speed, time saved, overlay), `page/` (the hook in the page's world that passes the player's audio on), `lookahead/` (demuxing, decoding and analysing that audio, and the speed schedule from it), `vad/` (Silero, resampler, offscreen client), `controller/` (the decisions), `popup/`, `shared/` (settings, time saved), `background/` (adds up the time saved; in Chrome, opens the offscreen document) and Chrome's `offscreen/`
+- `src/`: the extension's code, bundled by esbuild: `content/` (video, capture, speed, time saved, overlay), `options/` (the options page), `page/` (the hook in the page's world that passes the player's audio on), `lookahead/` (demuxing, decoding and analysing that audio, and the speed schedule from it), `vad/` (Silero, resampler, offscreen client), `controller/` (the decisions), `popup/`, `shared/` (settings, time saved), `background/` (adds up the time saved; in Chrome, opens the offscreen document) and Chrome's `offscreen/`
 - `manifest/`: `base.json` plus the Chrome and Firefox additions, merged by the build
 - `assets/`: the Silero model, and the icon (`icons/icon.svg`; `node scripts/icons.mjs` renders its PNGs with `rsvg-convert`)
 - `scripts/build.mjs`: the build

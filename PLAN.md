@@ -48,6 +48,7 @@ Phase 0's measurements behind these choices are in [spikes/phase0/REPORT.md](spi
 ```
 src/
   content/      video.js, capture.js, speed.js, saved.js (time saved), overlay.js, recorder.js (debug recording), main.js
+  options/      the options page (debug mode)
   vad/          silero.js (model and per-stream state), resample.js, load.js (loads it in an extension context), remote.js (port client for the fallback)
   background/   background.js (adds the tabs' time saved to the total; in Chrome also opens the offscreen document)
   offscreen/    offscreen.html, offscreen.js (Chrome only: serves the model over a port)
@@ -133,7 +134,7 @@ Result: see [eval/REPORT.md](eval/REPORT.md). On the speech the model hears, at 
 
 
 - **Test set:** 3–5 real segments, including the RISEN video (music intro, then continuous commentary) and long stretches of gameplay with little talking, where the false slowdowns happen. Speech times come from the auto-generated captions, corrected by hand where needed. Phase 0's three clips (`spikes/phase0/lib/clips.mjs`) are a starting point.
-- **Debug recording:** started by the user, it saves the analysed 16 kHz audio, probabilities, speeds and video times to a file.
+- **Debug recording:** started by the user, it saves the analysed 16 kHz audio, probabilities, speeds and video times to a file. The popup offers it in debug mode, turned on in the options page (the browser's add-on settings).
 - **Offline replay:** the same controller and model run under Node on the recordings, for fast threshold sweeps. Record at each gameplay speed in the browser: Chrome's and Firefox's time-stretching differ from ffmpeg's and from each other, so ffmpeg copies are only a rough guide. Phase 0 showed that Node replay matches the browser's probabilities on the same audio.
 - **Metrics:**
   - commentary heard at talk speed (%);

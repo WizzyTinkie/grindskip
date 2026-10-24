@@ -46,7 +46,8 @@ for (const [key, r] of Object.entries(RANGES)) {
 for (const key of ['enabled', 'lookahead', 'overlay']) {
   $(key).addEventListener('change', (e) => change({ [key]: e.target.checked }));
 }
-$('reset').addEventListener('click', () => change({ ...DEFAULTS, enabled: settings.enabled }));
+// Debug mode is set in the options page, so it stays
+$('reset').addEventListener('click', () => change({ ...DEFAULTS, enabled: settings.enabled, debug: settings.debug }));
 $('resume').addEventListener('click', async () => {
   await send({ type: RESUME });
   poll();
@@ -86,7 +87,8 @@ function showStatus(s) {
   $('note').hidden = !note;
   $('resume').hidden = !s?.overridden;
   recording = !!s?.recording;
-  $('record-box').hidden = !(s?.enabled && s.video) && !recording;
+  // In debug mode (the options page); a recording that runs can always be stopped
+  $('record-box').hidden = !(settings.debug && s?.enabled && s.video) && !recording;
   $('record').textContent = recording ? `Stop and save (${clock(s.recording.seconds)}${s.recording.full ? ', full' : ''})` : 'Start a debug recording';
 }
 
