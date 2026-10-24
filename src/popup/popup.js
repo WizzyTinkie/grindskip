@@ -7,6 +7,7 @@ import { duration, load as loadStats } from '../shared/stats.js';
 const api = globalThis.browser ?? globalThis.chrome;
 const POLL_MS = 400;
 const STATES = { speech: 'Talking', wait: 'Pause', gameplay: 'Gameplay' };
+const MODES = { 'look-ahead': 'Ahead of playback', live: 'Live' };
 const SENSITIVITY = { '-2': 'Lowest', '-1': 'Low', 0: 'Normal', 1: 'High', 2: 'Highest' };
 const FORMAT = {
   talkSpeed: (v) => `${v.toFixed(2)}x`,
@@ -77,6 +78,9 @@ function showStatus(s) {
   else state = note ? '–' : 'Waiting for the video to play';
   $('state').textContent = state;
   $('speed').textContent = s?.video && Number.isFinite(s.speed) ? `${s.speed.toFixed(2)}x` : '–';
+  const lagMs = s?.mode === 'look-ahead' ? s.lookahead?.lagMs : null;
+  $('mode').textContent = s?.video && s.mode ? MODES[s.mode] + (lagMs !== null && lagMs !== undefined ? ` · ${lagMs} ms` : '') : '–';
+  $('mode').title = lagMs !== null && lagMs !== undefined ? `Speed changes take about ${lagMs} ms to take effect here, so Grindskip slows down that much earlier` : '';
   $('saved-video').textContent = s?.video && s.saved ? duration(s.saved.video) : '–';
   $('note').textContent = note ?? '';
   $('note').hidden = !note;

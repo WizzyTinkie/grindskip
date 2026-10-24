@@ -1,7 +1,13 @@
-// Content script: follows the page's main video, captures its audio, runs
-// the speech detector on it and sets the playback speed. It stays idle (no
-// model, no capture) until Grindskip is on and an unmuted video plays.
-import { PARAMS, createController } from '../controller/controller.js';
+// Content script: follows the page's main video and sets its playback speed,
+// from an analysis of its audio before it plays where the player streams it
+// through Media Source Extensions (lookahead/, fed by page/hook.js), or else
+// by capturing its audio and running the speech detector on it live. It
+// stays idle (no model, no capture) until Grindskip is on and an unmuted
+// video plays.
+import { FRAME_SEC, PARAMS, createController, startThreshold } from '../controller/controller.js';
+import { createFeed } from '../lookahead/feed.js';
+import { createLagMeter } from '../lookahead/lag.js';
+import { LOOKAHEAD, createSchedule } from '../lookahead/schedule.js';
 import { ADD_SAVED, RECORD_START, RECORD_STOP, RESUME, STATUS } from '../shared/messages.js';
 import { DEFAULTS, load, watch } from '../shared/settings.js';
 import { canCompileWasm, loadModel } from '../vad/load.js';
@@ -11,7 +17,7 @@ import { createOverlay } from './overlay.js';
 import { createRecorder } from './recorder.js';
 import { countSaved } from './saved.js';
 import { controlSpeed } from './speed.js';
-import { trackVideo } from './video.js';
+import { isPlaying, trackVideo } from './video.js';
 
 const api = globalThis.browser ?? globalThis.chrome;
 // Frames waiting for the detector; older ones are dropped beyond this (0.5 s)
@@ -20,17 +26,34 @@ const MAX_QUEUE = 16;
 const MAX_FAILURES = 31;
 // How often the time saved is added to the total
 const REPORT_SAVED_MS = 10000;
+// How often the speed follows the look-ahead schedule
+const TICK_MS = 30;
+// Look-ahead keeps this much of the analysis behind the playing position,
+// for seeking back
+const KEEP_BEHIND_SEC = 120;
+// On top of the measured time a speed change takes, for the tick and noise
+const LAG_MARGIN_SEC = 0.06;
 
 let settings = DEFAULTS;
 let stopTracking = null;
 let follow = null;      // the pipeline for the followed video
 let vad = null;         // promise of the page's speech detector
+let feed = null;        // the look-ahead feed from the page hook, once on
+// How long a speed change takes to take effect here (the browser and the
+// output device), for look-ahead's lead; kept across videos, and in storage
+// across pages, so the first speech on the next page is caught too
+const LAG_KEY = 'lookaheadLag';
+const lag = createLagMeter(() => {
+  api.storage.local.set({ [LAG_KEY]: lag.estimate }).catch(() => {});
+});
+api.storage.local.get(LAG_KEY).then((d) => lag.seed(d[LAG_KEY]), () => {});
 let overlay = null;
 let recorder = null;    // the debug recording, while one runs
 
 // The speech detector, loaded on first use: in the content script, or in
 // Chrome's offscreen document when the page's CSP stops this script
-// compiling WebAssembly.
+// compiling WebAssembly. Resolves to { where, createStream(), release() };
+// each stream ({ process, reset, release? }) has its own model state.
 function getVad() {
   vad ??= openVad().catch((e) => {
     vad = null;
@@ -44,8 +67,7 @@ async function openVad() {
   if (canCompileWasm()) {
     try {
       const model = await loadModel(api.runtime);
-      const stream = model.createStream();
-      return { where: 'content script', process: stream.process, reset: stream.reset, release: model.release };
+      return { where: 'content script', createStream: model.createStream, release: model.release };
     } catch (e) {
       localError = e;
     }
@@ -57,7 +79,32 @@ async function openVad() {
   } catch (e) {
     throw localError ?? e;
   }
-  return Object.assign(remote, { where: 'offscreen document' });
+  // One port per stream, starting with the one just tried
+  let spare = remote;
+  const streams = new Set();
+  return {
+    where: 'offscreen document',
+    createStream() {
+      const s = spare ?? createRemoteVad(api.runtime);
+      spare = null;
+      streams.add(s);
+      return s;
+    },
+    release() {
+      for (const s of [...streams, spare]) s?.release();
+    },
+  };
+}
+
+// A stream of the speech detector that loads it on first use
+function lazyStream() {
+  let stream = null;
+  const get = () => (stream ??= getVad().then((v) => v.createStream()));
+  return {
+    process: (frame) => get().then((s) => s.process(frame)),
+    reset: () => stream?.then((s) => s.reset(), () => {}),
+    release: () => stream?.then((s) => s.release?.(), () => {}),
+  };
 }
 
 function releaseVad() {
@@ -66,7 +113,9 @@ function releaseVad() {
   v?.then((x) => x.release()).catch(() => {});
 }
 
-// Everything for one video: capture, controller and speed.
+// Everything for one video: the speed, decided by look-ahead while the
+// video's audio can be analysed before it plays (lookahead/), or else by
+// listening live: capture and controller.
 function createPipeline(video) {
   const controller = createController(settings);
   const speed = controlSpeed(video, (rate) => {
@@ -74,7 +123,8 @@ function createPipeline(video) {
     show();
   });
   const saved = countSaved(video, () => !speed.overridden);
-  let detector = null;
+  let detector = null;     // its live stream
+  let where = null;
   let capture = null;
   let starting = false;
   let stopped = false;
@@ -85,14 +135,19 @@ function createPipeline(video) {
   let selfSeek = false;
   let failures = 0;       // frames in a row the detector failed on
   let last = null;        // the latest frame's probability and decision
+  let schedule = null;    // look-ahead's, while it decides
+  let analysis = null;    // the look-ahead analysis it follows
 
   async function begin() {
-    if (starting || capture || error || video.muted || video.paused) return;
+    if (schedule || starting || capture || error || video.muted || video.paused) return;
     starting = true;
     show();
     try {
-      detector = await getVad();
-      if (stopped) return;
+      const v = await getVad();
+      where = v.where;
+      detector ??= v.createStream();
+      // Look-ahead may have taken over while the model loaded
+      if (stopped || schedule) return;
       capture = startCapture(video, onFrame);
     } catch (e) {
       console.warn('Grindskip:', e);
@@ -129,7 +184,7 @@ function createPipeline(video) {
         p = NaN;
       }
       const inferMs = performance.now() - t0;
-      if (item.generation !== generation || stopped) continue;
+      if (item.generation !== generation || stopped || schedule) continue;
       const r = Number.isFinite(p) ? decide(p, item.meta) : null;
       recorder?.frame(item.frame, { p, inferMs, ...item.meta, state: r?.state, speed: r?.speed });
     }
@@ -158,13 +213,59 @@ function createPipeline(video) {
     detector?.reset();
   }
 
+  // Look-ahead: while the video's audio is analysed before it plays, the
+  // speed follows the schedule, and the live capture is off
+  function tick() {
+    const a = feed?.analysis;
+    const usable = a && a.supported && !a.error ? a : null;
+    if (usable && usable !== analysis) {
+      capture?.stop();
+      capture = null;
+      restart('look-ahead');
+      analysis = usable;
+      schedule = createSchedule(usable.timeline, settings);
+      schedule.reset(video.currentTime);
+      getVad().then((v) => { where = v.where; }, () => {});
+      recorder?.event('mode', { mode: 'look-ahead' });
+    } else if (!usable && schedule) {
+      schedule = null;
+      analysis = null;
+      controller.reset();
+      recorder?.event('mode', { mode: 'live' });
+      begin();
+    }
+    // Muted videos are left alone, as when listening live
+    if (!schedule || !isPlaying(video) || video.muted) return;
+    const t = video.currentTime;
+    const now = performance.now() / 1000;
+    lag.sample(now, t);
+    if (analysis.timeline.size > 2 * KEEP_BEHIND_SEC / FRAME_SEC) analysis.timeline.prune(t - KEEP_BEHIND_SEC);
+    const at = schedule.at(t, leadSec());
+    const p = analysis.timeline.at(t) ?? null;
+    const start = startThreshold(1, settings.sensitivity);
+    const state = at === 'gameplay' ? 'gameplay' : p !== null && p >= start ? 'speech' : 'wait';
+    // Talk speed until the analysis reaches far enough ahead to know
+    const rate = at === 'gameplay' ? settings.playSpeed : settings.talkSpeed;
+    last = { p, start, end: PARAMS.end, state, speed: rate, known: at !== null };
+    const before = video.playbackRate;
+    speed.set(rate);
+    if (video.playbackRate !== before) lag.changed(now, t, before, video.playbackRate);
+    show();
+  }
+  const ticker = setInterval(tick, TICK_MS);
+
   const onSeeking = () => {
+    schedule?.reset(video.currentTime);
+    lag.reset();
     const rewind = selfSeek;
     selfSeek = false;
     if (!rewind) controller.reset({ seek: true });
     restart(rewind ? 'rewind' : 'seek');
   };
   const onLoadStart = () => {
+    feed?.follow(video.currentSrc);
+    schedule = null;
+    analysis = null;
     controller.reset();
     speed.resume();
     reportSaved(saved);
@@ -177,7 +278,20 @@ function createPipeline(video) {
   for (const [name, fn] of Object.entries(events)) video.addEventListener(name, fn);
   begin();
 
+  // How far the look-ahead analysis reaches beyond the playing position,
+  // and how long speed changes take to take effect
+  function lookaheadStatus() {
+    if (!feed) return null;
+    const a = feed.analysis;
+    const ms = (x) => (x === null ? null : Math.round(x * 1000));
+    return { ...feed.status(), ahead: a ? +a.timeline.ahead(video.currentTime).toFixed(2) : 0, lagMs: ms(lag.estimate), lastLagMs: ms(lag.last), leadMs: ms(leadSec()) };
+  }
+
   function note() {
+    if (schedule) {
+      if (speed.overridden) return 'Speed changed by hand, so Grindskip has stopped changing it on this video';
+      return last && !last.known ? 'Analysing the audio ahead…' : null;
+    }
     if (error) return error;
     if (starting) return 'Loading the speech detector…';
     if (failures >= MAX_FAILURES) return 'The speech detector isn’t responding';
@@ -189,7 +303,10 @@ function createPipeline(video) {
   return {
     video,
     saved,
-    configure(s) { controller.configure(s); },
+    configure(s) {
+      controller.configure(s);
+      schedule?.configure(s);
+    },
     resume() {
       speed.resume();
       if (last) speed.set(last.speed);
@@ -203,13 +320,16 @@ function createPipeline(video) {
         start: last?.start ?? null,
         end: last?.end ?? null,
         overridden: speed.overridden,
-        where: detector?.where ?? null,
+        where,
+        mode: schedule ? 'look-ahead' : 'live',
+        lookahead: lookaheadStatus(),
         note: note(),
         saved: { video: saved.seconds, unsent: saved.unsent },
       };
     },
     stop() {
       stopped = true;
+      clearInterval(ticker);
       generation++;
       queue = [];
       for (const [name, fn] of Object.entries(events)) video.removeEventListener(name, fn);
@@ -234,8 +354,16 @@ function reportSaved(saved) {
   }
 }
 
+// How long before speech look-ahead slows down, in wall time: enough for
+// the speed change to take effect
+function leadSec() {
+  return Math.max(LOOKAHEAD.leadSec, (lag.estimate ?? 0) + LAG_MARGIN_SEC);
+}
+
 function followVideo(video) {
   follow?.stop();
+  if (video) feed ??= createFeed(lazyStream);
+  feed?.follow(video?.currentSrc ?? null);
   follow = video ? createPipeline(video) : null;
   show();
 }

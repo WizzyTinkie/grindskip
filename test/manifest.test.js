@@ -72,7 +72,19 @@ test('both expose the ONNX Runtime WebAssembly and the model to the content scri
     const war = m.web_accessible_resources.flatMap((r) => r.resources);
     assert.ok(war.includes('ort-wasm-simd-threaded.wasm'), browser);
     assert.ok(war.includes('silero_vad.onnx'), browser);
-    const contentMatches = m.content_scripts.flatMap((c) => c.matches);
+    const contentMatches = m.content_scripts.find((c) => c.js.includes('content.js')).matches;
     for (const r of m.web_accessible_resources) assert.deepEqual(r.matches, contentMatches, browser);
+  }
+});
+
+test('both run the look-ahead hook in the page\'s world before its scripts, where the content script runs', () => {
+  for (const browser of ['chrome', 'firefox']) {
+    const m = manifestFor(browser, root);
+    const hook = m.content_scripts.find((c) => c.js.includes('hook.js'));
+    const content = m.content_scripts.find((c) => c.js.includes('content.js'));
+    assert.equal(hook.world, 'MAIN', browser);
+    assert.equal(hook.run_at, 'document_start', browser);
+    assert.deepEqual(hook.matches, content.matches, browser);
+    assert.equal(hook.all_frames, content.all_frames, browser);
   }
 });

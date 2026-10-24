@@ -39,8 +39,10 @@ Click the Grindskip button in the toolbar and turn it on, or press Alt+Shift+G. 
 | Speed while playing | 2.5x | the speed while no one is; above 3x, loud gameplay is more often mistaken for speech |
 | Wait before speeding up | 1.5 s | how long a pause has to be before the video speeds up |
 | Sensitivity | Normal | higher: quieter or less clear speech also counts |
-| Rewind on speech | off | after a stretch of gameplay, jumps back to where the talking started (at most 1.5 s) |
+| Rewind on speech | off | when listening live (see below), after a stretch of gameplay, jumps back to where the talking started (at most 1.5 s) |
 | Show the speech meter | off | draws the speech probability, the state and the speed over the video |
+
+**Looking ahead.** Where the video player streams its audio through the browser's Media Source Extensions, as YouTube does, Grindskip analyses the audio before it plays: a small script in the page passes Grindskip a copy of the audio the player loads, and Grindskip decodes it and finds the speech in it, usually 30 s or more ahead. The video then slows down just before someone starts talking, and short sounds that aren't speech are left out. Elsewhere (plain video files, or audio it can't decode yet, such as AAC), it listens to the video as it plays and slows down a moment after the talking starts; rewind can make up for that. The popup's *Listening* line says which: *Ahead of playback* or *Live*. Either way, the audio never leaves the computer.
 
 The popup also shows the time saved on the current video and in total, compared with watching at 1x. A rewind counts against it, and time played at a speed you set yourself doesn't count. The total is kept on your computer only.
 
@@ -50,13 +52,14 @@ If it slows down or speeds up when it shouldn't, *Start a debug recording* in th
 
 ## Layout
 
-- `src/`: the extension's code, bundled by esbuild: `content/` (video, capture, speed, time saved, overlay), `vad/` (Silero, resampler, offscreen client), `controller/` (the decisions), `popup/`, `shared/` (settings, time saved), `background/` (adds up the time saved; in Chrome, opens the offscreen document) and Chrome's `offscreen/`
+- `src/`: the extension's code, bundled by esbuild: `content/` (video, capture, speed, time saved, overlay), `page/` (the hook in the page's world that passes the player's audio on), `lookahead/` (demuxing, decoding and analysing that audio, and the speed schedule from it), `vad/` (Silero, resampler, offscreen client), `controller/` (the decisions), `popup/`, `shared/` (settings, time saved), `background/` (adds up the time saved; in Chrome, opens the offscreen document) and Chrome's `offscreen/`
 - `manifest/`: `base.json` plus the Chrome and Firefox additions, merged by the build
 - `assets/`: the Silero model, and the icon (`icons/icon.svg`; `node scripts/icons.mjs` renders its PNGs with `rsvg-convert`)
 - `scripts/build.mjs`: the build
 - `test/`: unit tests; `test/fixtures/traces.json` holds speech probabilities recorded in Phase 0, for replaying the controller
 - `eval/`: Phase 3's evaluation: records test clips in the browsers and replays them through the controller to score and tune it (see [eval/README.md](eval/README.md) and [eval/REPORT.md](eval/REPORT.md))
 - `spikes/phase0/`: Phase 0 experiments and measurements, not shipped
+- `spikes/lookahead/`: the look-ahead spike and its checks on YouTube and a local Media Source page (see [spikes/lookahead/REPORT.md](spikes/lookahead/REPORT.md)), not shipped
 
 ## License
 

@@ -28,6 +28,7 @@ const targets = {
 };
 const sharedScripts = {
   'background.js': 'src/background/background.js',
+  'hook.js': 'src/page/hook.js',
   'content.js': 'src/content/main.js',
   'popup.js': 'src/popup/popup.js',
 };

@@ -1,0 +1,248 @@
+{
+ "browser": "firefox",
+ "version": "firefox/158.0",
+ "videoId": "BFG1Q7zpNtE",
+ "consentRejected": true,
+ "samples": [
+  {
+   "t": 15.5,
+   "rate": 1,
+   "ad": false,
+   "src": "blob:",
+   "ahead": [
+    34.5,
+    25.1
+   ]
+  },
+  {
+   "t": 16.5,
+   "rate": 1,
+   "ad": false,
+   "src": "blob:",
+   "ahead": [
+    43.5,
+    34.1
+   ]
+  },
+  {
+   "t": 17.5,
+   "rate": 1,
+   "ad": false,
+   "src": "blob:",
+   "ahead": [
+    42.5,
+    33.1
+   ]
+  },
+  {
+   "t": 18.5,
+   "rate": 1,
+   "ad": false,
+   "src": "blob:",
+   "ahead": [
+    41.5,
+    32.1
+   ]
+  },
+  {
+   "t": 19.5,
+   "rate": 1,
+   "ad": false,
+   "src": "blob:",
+   "ahead": [
+    40.5,
+    31.1
+   ]
+  },
+  {
+   "t": 20.5,
+   "rate": 1,
+   "ad": false,
+   "src": "blob:",
+   "ahead": [
+    39.5,
+    40.3
+   ]
+  },
+  {
+   "t": 21.5,
+   "rate": 1,
+   "ad": false,
+   "src": "blob:",
+   "ahead": [
+    38.5,
+    39.3
+   ]
+  },
+  {
+   "t": 22.5,
+   "rate": 1,
+   "ad": false,
+   "src": "blob:",
+   "ahead": [
+    37.5,
+    38.3
+   ]
+  },
+  {
+   "t": 23.6,
+   "rate": 1,
+   "ad": false,
+   "src": "blob:",
+   "ahead": [
+    36.4,
+    37.2
+   ]
+  },
+  {
+   "t": 24.6,
+   "rate": 1,
+   "ad": false,
+   "src": "blob:",
+   "ahead": [
+    35.4,
+    36.2
+   ]
+  },
+  {
+   "t": 25.6,
+   "rate": 1,
+   "ad": false,
+   "src": "blob:",
+   "ahead": [
+    34.4,
+    35.2
+   ]
+  },
+  {
+   "t": 26.6,
+   "rate": 1,
+   "ad": false,
+   "src": "blob:",
+   "ahead": [
+    33.4,
+    34.2
+   ]
+  },
+  {
+   "t": 27.6,
+   "rate": 1,
+   "ad": false,
+   "src": "blob:",
+   "ahead": [
+    32.4,
+    33.2
+   ]
+  },
+  {
+   "t": 28.6,
+   "rate": 1,
+   "ad": false,
+   "src": "blob:",
+   "ahead": [
+    31.4,
+    32.2
+   ]
+  },
+  {
+   "t": 29.6,
+   "rate": 1,
+   "ad": false,
+   "src": "blob:",
+   "ahead": [
+    30.4,
+    31.2
+   ]
+  },
+  {
+   "t": 30.6,
+   "rate": 1,
+   "ad": false,
+   "src": "blob:",
+   "ahead": [
+    29.4,
+    30.2
+   ]
+  },
+  {
+   "t": 31.6,
+   "rate": 1,
+   "ad": false,
+   "src": "blob:",
+   "ahead": [
+    28.4,
+    29.2
+   ]
+  },
+  {
+   "t": 32.6,
+   "rate": 1,
+   "ad": false,
+   "src": "blob:",
+   "ahead": [
+    27.4,
+    28.2
+   ]
+  },
+  {
+   "t": 33.6,
+   "rate": 1,
+   "ad": false,
+   "src": "blob:",
+   "ahead": [
+    26.4,
+    27.2
+   ]
+  },
+  {
+   "t": 34.6,
+   "rate": 1,
+   "ad": false,
+   "src": "blob:",
+   "ahead": [
+    25.4,
+    26.2
+   ]
+  }
+ ],
+ "workerMse": false,
+ "managedMediaSource": false,
+ "mediaSources": 1,
+ "buffers": [
+  {
+   "mime": "audio/webm; codecs=\"opus\"",
+   "appends": 756,
+   "bytes": 1065348,
+   "offsets": [
+    0
+   ]
+  },
+  {
+   "mime": "video/mp4; codecs=\"avc1.4D401E\"",
+   "appends": 927,
+   "bytes": 3110291,
+   "offsets": [
+    0
+   ]
+  }
+ ],
+ "saved": [
+  {
+   "file": "results/firefox-audio-0.bin",
+   "bytes": 266
+  },
+  {
+   "file": "results/firefox-audio-1.bin",
+   "bytes": 32768
+  },
+  {
+   "file": "results/firefox-audio-2.bin",
+   "bytes": 26768
+  },
+  {
+   "file": "results/firefox-audio-3.bin",
+   "bytes": 6000
+  }
+ ],
+ "ok": true
+}
