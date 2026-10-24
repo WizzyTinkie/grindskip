@@ -3,21 +3,22 @@ import { setImmediate as idle } from 'node:timers/promises';
 import { after, before, describe, test } from 'node:test';
 import { FRAME_SEC } from '../src/controller/controller.js';
 import { createAnalysis } from '../src/lookahead/analysis.js';
-import { codecsOf, decodable, isAudioOnly } from '../src/lookahead/codecs.js';
+import { codecsOf, decodable, hasAudio } from '../src/lookahead/codecs.js';
 import { fragment, initSegment, lcConfig } from './mp4.js';
 
 describe('codecs', () => {
   test('tell audio buffers, and what look-ahead decodes', () => {
     assert.deepEqual(codecsOf('video/mp4; codecs="avc1.4D401F, mp4a.40.2"'), ['avc1.4D401F', 'mp4a.40.2']);
     assert.deepEqual(codecsOf('audio/mp4'), []);
-    assert.equal(isAudioOnly('audio/mp4'), true);
-    assert.equal(isAudioOnly('video/mp4;codecs="mp4a.40.2"'), true);
-    assert.equal(isAudioOnly('video/mp4;codecs="avc1.4D401F,mp4a.40.2"'), false);
-    assert.equal(isAudioOnly('video/webm; codecs="vp09.00.30.08"'), false);
-    for (const mime of ['audio/webm; codecs="opus"', 'audio/mp4;codecs=mp4a.40.2', 'audio/mp4; codecs="mp4a.40.5"', 'video/mp4;codecs="mp4a.40.29"', 'audio/mp4; codecs="opus"']) {
+    assert.equal(hasAudio('audio/mp4'), true);
+    assert.equal(hasAudio('video/mp4;codecs="mp4a.40.2"'), true);
+    assert.equal(hasAudio('video/mp4;codecs="avc1.4D402A,mp4a.40.2"'), true);
+    assert.equal(hasAudio('video/mp4;codecs="avc1.4D401F"'), false);
+    assert.equal(hasAudio('video/webm; codecs="vp09.00.30.08"'), false);
+    for (const mime of ['audio/webm; codecs="opus"', 'audio/mp4;codecs=mp4a.40.2', 'audio/mp4; codecs="mp4a.40.5"', 'video/mp4;codecs="mp4a.40.29"', 'audio/mp4; codecs="opus"', 'video/mp4;codecs="avc1.4D402A,mp4a.40.2"']) {
       assert.equal(decodable(mime), true, mime);
     }
-    for (const mime of ['audio/mp4', 'audio/mp4; codecs="ec-3"', 'audio/webm; codecs="vorbis"', 'video/mp4;codecs="avc1.4D401F,mp4a.40.2"', 'audio/mpeg']) {
+    for (const mime of ['audio/mp4', 'audio/mp4; codecs="ec-3"', 'audio/webm; codecs="vorbis"', 'video/mp4;codecs="avc1.4D401F"', 'video/mp4;codecs="avc1.4D401F,ec-3"', 'audio/mpeg']) {
       assert.equal(decodable(mime), false, mime);
     }
   });

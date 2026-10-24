@@ -13,7 +13,7 @@ export { sleep } from '../../eval/lib/harness.mjs';
 export const puppeteer = createRequire(new URL('../../eval/package.json', import.meta.url))('puppeteer');
 export const DIR = import.meta.dirname;
 
-const TYPES = { '.html': 'text/html', '.js': 'text/javascript', '.mjs': 'text/javascript' };
+const TYPES = { '.html': 'text/html', '.js': 'text/javascript', '.mjs': 'text/javascript', '.mp4': 'video/mp4' };
 
 export function startServer() {
   const server = createServer((req, res) => {

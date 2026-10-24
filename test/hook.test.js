@@ -130,17 +130,17 @@ test('beyond 4 MB the oldest appends go, marked by a gap, but not the init segme
 
 const mp4Init = () => Uint8Array.of(0, 0, 0, 16, 0x66, 0x74, 0x79, 0x70, 0, 0, 0, 0, 0, 0, 0, 0);
 
-test('buffers labelled video but with only audio codecs are followed too', async () => {
+test('buffers labelled video but with audio in them are followed too', async () => {
   await take();
   const ms = new MediaSource();
   const url = URL.createObjectURL(ms);
   ms.addSourceBuffer('video/mp4;codecs="mp4a.40.2"').appendBuffer(mp4Init());
   ms.addSourceBuffer('video/mp4;codecs="avc1.4D401F"').appendBuffer(mp4Init());
-  ms.addSourceBuffer('video/mp4;codecs="avc1.4D401F,mp4a.40.2"').appendBuffer(mp4Init());
+  ms.addSourceBuffer('video/mp4;codecs="avc1.4D402A,mp4a.40.2"').appendBuffer(mp4Init());
   follow(url);
   const kept = await take();
-  assert.deepEqual(kept.filter((m) => m.type === 'buffer').map((m) => m.mime), ['video/mp4;codecs="mp4a.40.2"']);
-  assert.equal(kept.find((m) => m.type === 'append').init, true);
+  assert.deepEqual(kept.filter((m) => m.type === 'buffer').map((m) => m.mime), ['video/mp4;codecs="mp4a.40.2"', 'video/mp4;codecs="avc1.4D402A,mp4a.40.2"']);
+  assert.ok(kept.filter((m) => m.type === 'append').every((m) => m.init));
 });
 
 test('each append comes with its timestampOffset and append window', async () => {

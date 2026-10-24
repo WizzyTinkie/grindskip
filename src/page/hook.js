@@ -13,8 +13,9 @@
 // time, so for each audio SourceBuffer the hook keeps the latest init
 // segment and the recent appends (up to KEEP_BYTES), and hands them over
 // when that video is followed, then forwards new appends as they come.
-// Audio buffers are the audio/ ones and those whose codecs are all audio
-// ones: some players label theirs video/mp4.
+// Audio buffers are the audio/ ones and those with an audio codec: some
+// players label theirs video/mp4, and some put video and audio in one
+// buffer (whose video bytes come along, and fill KEEP_BYTES sooner).
 //
 // Each append goes with the timestampOffset that applied to it: the one set
 // before it, or in "sequence" mode, where the browser sets it itself, the
@@ -33,7 +34,7 @@
 //                                       and append window
 //   { type: 'gap', buffer }             appends were missed or aborted: the
 //                                       next one starts afresh
-import { isAudioOnly } from '../lookahead/codecs.js';
+import { hasAudio } from '../lookahead/codecs.js';
 
 (() => {
   const HELLO = 'grindskip:lookahead';
@@ -105,7 +106,7 @@ import { isAudioOnly } from '../lookahead/codecs.js';
   MediaSource.prototype.addSourceBuffer = function (mime) {
     const sb = addSourceBuffer.apply(this, arguments);
     try {
-      if (isAudioOnly(mime)) {
+      if (hasAudio(mime)) {
         const b = { buffer: nextId++, source: sourceId(this), mime: String(mime), init: null, appends: [], bytes: 0, cut: false, pending: null };
         buffers.set(sb, b);
         sources.get(b.source)?.push(b);
