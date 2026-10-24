@@ -31,10 +31,12 @@ const sharedScripts = {
   'hook.js': 'src/page/hook.js',
   'content.js': 'src/content/main.js',
   'popup.js': 'src/popup/popup.js',
+  'options.js': 'src/options/options.js',
 };
 const sharedFiles = {
   'popup.html': 'src/popup/popup.html',
   'popup.css': 'src/popup/popup.css',
+  'options.html': 'src/options/options.html',
   'ort-wasm-simd-threaded.wasm': 'node_modules/onnxruntime-web/dist/ort-wasm-simd-threaded.wasm',
   'silero_vad.onnx': 'assets/silero_vad.onnx',
   ...Object.fromEntries([16, 32, 48, 128].map((s) => [`icon-${s}.png`, `assets/icons/icon-${s}.png`])),

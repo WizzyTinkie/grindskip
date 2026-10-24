@@ -17,6 +17,10 @@
       "32": "icon-off-32.png"
     }
   },
+  "options_ui": {
+    "page": "options.html",
+    "open_in_tab": false
+  },
   "commands": {
     "toggle": {
       "suggested_key": { "default": "Alt+Shift+G" },

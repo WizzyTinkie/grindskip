@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Grindskip options</title>
+  <style>
+    :root { color-scheme: light dark; --muted: #656d76; --accent: #16a34a; }
+    @media (prefers-color-scheme: dark) { :root { --muted: #9aa0a6; --accent: #4ade80; } }
+    body { margin: 0; padding: 12px 14px; font: 13px/1.45 system-ui, sans-serif; }
+    label { display: flex; gap: 8px; align-items: flex-start; }
+    input { margin: 2px 0 0; accent-color: var(--accent); }
+    small { display: block; color: var(--muted); font-size: 12px; }
+  </style>
+</head>
+<body>
+  <label>
+    <input type="checkbox" id="debug">
+    <span>Debug mode
+      <small>Shows <em>Start a debug recording</em> in the popup: it saves the audio Grindskip analysed and its decisions to a file, for tuning. Nothing is sent anywhere.</small>
+    </span>
+  </label>
+  <script src="options.js"></script>
+</body>
+</html>

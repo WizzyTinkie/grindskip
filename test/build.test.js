@@ -26,6 +26,7 @@ function referencedFiles(m) {
     ...(m.background?.service_worker ? [m.background.service_worker] : []),
     ...(m.background?.scripts ?? []),
     ...(m.action?.default_popup ? [m.action.default_popup] : []),
+    ...(m.options_ui?.page ? [m.options_ui.page] : []),
     ...Object.values(m.icons ?? {}),
     ...Object.values(m.action?.default_icon ?? {}),
     // The green toolbar icon the background script switches to
