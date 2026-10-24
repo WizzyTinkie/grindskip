@@ -40,6 +40,11 @@ export function createTimeline() {
       while (p.has(k)) k++;
       return Math.max(0, (k - first) * FRAME_SEC - (t - first * FRAME_SEC));
     },
+    // The frames from media time t on, as [start, probability], in no order
+    *from(t) {
+      const k0 = Math.floor(t / FRAME_SEC);
+      for (const [k, prob] of p) if (k >= k0) yield [k * FRAME_SEC, prob];
+    },
     // Forgets the frames before media time t
     prune(t) {
       const k0 = Math.floor(t / FRAME_SEC);

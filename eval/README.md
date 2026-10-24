@@ -44,7 +44,13 @@ This plays every clip at 1x, 2x, 2.5x, 3x and 4x (both of Grindskip's speeds set
 
 `pages/mse.html?src=…` plays a clip through Media Source Extensions instead, the way YouTube does, so that Grindskip looks ahead; `spikes/lookahead/check-local.mjs` uses it.
 
-A debug recording saved from the popup has the same format, so a session from real use can be inspected the same way.
+A debug recording saved from the popup has the same format, so a session from real use can be inspected the same way. One made while Grindskip looked ahead has a `lookahead` section instead (the analysed frames by media time, the schedule's ticks, the analysis's status), which `lookahead.mjs` replays:
+
+```bash
+node lookahead.mjs ~/Downloads/grindskip-….json --stretches
+```
+
+It prints what the analysis reached (how far ahead, how long speed changes took, errors), then runs the schedule again over the recorded ticks and compares its talk stretches with the browser's. `--set waitSec=1,minFrames=4` changes a setting or a look-ahead parameter, `--lead 0.3` the lead, and `--probs node` reruns Silero under Node on the recorded audio (`--model` for another model).
 
 ## Scoring and tuning
 
