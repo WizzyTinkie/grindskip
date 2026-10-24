@@ -6,7 +6,10 @@
 //
 // A consent page is answered with "Reject all". A bot check stops the run.
 //
-// Usage: node spikes/lookahead/check-youtube.mjs chrome|firefox [--video ID] [--sec 20] [--seek 300] [--play 2.5]
+// --aac hides Opus from the player (MediaSource.isTypeSupported and
+// mediaCapabilities say no), so it streams its AAC instead.
+//
+// Usage: node spikes/lookahead/check-youtube.mjs chrome|firefox [--video ID] [--sec 20] [--seek 300] [--play 2.5] [--aac]
 import { evalCmd, launch, nullSink, sleep, waitForEval } from '../../eval/lib/harness.mjs';
 
 const [browserName, ...rest] = process.argv.slice(2);
@@ -24,6 +27,21 @@ const browser = await launch(browserName);
 try {
   const page = await browser.newPage();
   await page.setViewport({ width: 1280, height: 900 });
+  if (rest.includes('--aac')) {
+    await page.evaluateOnNewDocument(() => {
+      const isTypeSupported = MediaSource.isTypeSupported;
+      MediaSource.isTypeSupported = function (t) {
+        return /opus/i.test(t) ? false : isTypeSupported.call(this, t);
+      };
+      const decodingInfo = navigator.mediaCapabilities?.decodingInfo;
+      if (decodingInfo) {
+        navigator.mediaCapabilities.decodingInfo = function (c) {
+          if (/opus/i.test(c?.audio?.contentType ?? '')) return Promise.resolve({ supported: false, smooth: false, powerEfficient: false });
+          return decodingInfo.call(this, c);
+        };
+      }
+    });
+  }
   await page.goto(`https://www.youtube.com/watch?v=${videoId}`, { waitUntil: 'domcontentloaded' });
   const rejected = await page.waitForFunction(() => {
     const b = [...document.querySelectorAll('button')].find((x) => /^\s*reject all\s*$/i.test(x.textContent));
