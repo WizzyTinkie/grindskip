@@ -77,6 +77,7 @@ export function createAnalysis(mime, stream) {
   let error = null;
   let stopped = false;
   let decodedUntil = null;
+  let onAnalysed = null;  // the debug recording's, while one runs
   const counts = { bytes: 0, frames: 0, decoded: 0, gaps: 0, steps: 0 };
 
   function fail(e) {
@@ -122,8 +123,11 @@ export function createAnalysis(mime, stream) {
       decodedUntil = expected;
       framer.push(resampler.push(mono), (frame) => {
         const at = start + frames++ * FRAME_SEC;
-        stream.process(frame.slice()).then((p) => {
-          if (Number.isFinite(p) && !stopped) timeline.set(at, p);
+        const copy = frame.slice();
+        stream.process(copy).then((p) => {
+          if (!Number.isFinite(p) || stopped) return;
+          timeline.set(at, p);
+          onAnalysed?.(at, p, copy);
         }, fail);
       });
     } catch (e) {
@@ -164,6 +168,11 @@ export function createAnalysis(mime, stream) {
     // Bytes received, frames demuxed and decoded, gaps, small steps between
     // segments, and the decoder's queue
     get counts() { return { ...counts, queued: decoder?.decodeQueueSize ?? null, decoder: decoder?.state ?? null }; },
+    // fn(at, p, samples) for each frame analysed from now on (the debug
+    // recording), or null for none
+    tap(fn) {
+      onAnalysed = fn;
+    },
     // The buffer's type changed (SourceBuffer.changeType); an init segment
     // follows
     changeType(next) {

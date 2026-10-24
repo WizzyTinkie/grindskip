@@ -49,6 +49,7 @@ const lag = createLagMeter(() => {
 api.storage.local.get(LAG_KEY).then((d) => lag.seed(d[LAG_KEY]), () => {});
 let overlay = null;
 let recorder = null;    // the debug recording, while one runs
+const recordAnalysed = (at, p, samples) => recorder?.analysed(at, p, samples);
 
 // The speech detector, loaded on first use: in the content script, or in
 // Chrome's offscreen document when the page's CSP stops this script
@@ -228,6 +229,7 @@ function createPipeline(video) {
       recorder?.event('mode', { mode: 'live' });
       begin();
     }
+    analysis?.tap(recorder ? recordAnalysed : null);
     // Muted videos are left alone, as when listening live
     if (!schedule || !isPlaying(video) || video.muted) return;
     const t = video.currentTime;
@@ -244,6 +246,7 @@ function createPipeline(video) {
     const before = video.playbackRate;
     speed.set(rate);
     if (video.playbackRate !== before) lag.changed(now, t, before, video.playbackRate);
+    recorder?.tick({ mediaTime: t, rate, playing: video.playbackRate, at, p }, lookaheadStatus);
     show();
   }
   const ticker = setInterval(tick, TICK_MS);
@@ -295,6 +298,12 @@ function createPipeline(video) {
   return {
     video,
     saved,
+    // A recording starts: what look-ahead analysed so far, behind and ahead
+    // (its audio is gone; from now on the analysis passes it on)
+    record(rec) {
+      if (!analysis) return;
+      for (const [at, p] of analysis.timeline.from(-Infinity)) rec.analysed(at, p);
+    },
     configure(s) {
       controller.configure(s);
       schedule?.configure(s);
@@ -404,7 +413,9 @@ function startRecording() {
     userAgent: navigator.userAgent,
     settings,
     params: PARAMS,
+    lookaheadParams: LOOKAHEAD,
   });
+  follow?.record(recorder);
 }
 
 // Ends the recording and returns it (a plain object, see recorder.js).
