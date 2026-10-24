@@ -28,6 +28,7 @@ function render() {
     $(`${key}-out`).textContent = FORMAT[key](settings[key]);
   }
   $('fast-note').hidden = settings.playSpeed <= 3;
+  $('lookahead').checked = settings.lookahead;
   $('overlay').checked = settings.overlay;
 }
 
@@ -42,7 +43,7 @@ for (const [key, r] of Object.entries(RANGES)) {
   Object.assign($(key), { min: r.min, max: r.max, step: r.step });
   $(key).addEventListener('input', (e) => change({ [key]: Number(e.target.value) }));
 }
-for (const key of ['enabled', 'overlay']) {
+for (const key of ['enabled', 'lookahead', 'overlay']) {
   $(key).addEventListener('change', (e) => change({ [key]: e.target.checked }));
 }
 $('reset').addEventListener('click', () => change({ ...DEFAULTS, enabled: settings.enabled }));
