@@ -38,7 +38,7 @@ let settings = DEFAULTS;
 let stopTracking = null;
 let follow = null;      // the pipeline for the followed video
 let vad = null;         // promise of the page's speech detector
-let feed = null;        // the look-ahead feed from the page hook, once on
+let feed = null;        // the look-ahead feed from the page hook, while on
 // How long a speed change takes to take effect here (the browser and the
 // output device), for look-ahead's lead; kept across videos, and in storage
 // across pages, so the first speech on the next page is caught too
@@ -354,7 +354,7 @@ function leadSec() {
 
 function followVideo(video) {
   follow?.stop();
-  if (video) feed ??= createFeed(lazyStream);
+  if (video && settings.lookahead) feed ??= createFeed(lazyStream);
   feed?.follow(video?.currentSrc ?? null);
   follow = video ? createPipeline(video) : null;
   show();
@@ -379,6 +379,14 @@ function apply(next) {
     stopTracking = null;
     followVideo(null);
     releaseVad();
+  }
+  // Without the feed, the pipeline goes back to listening live on its next tick
+  if (!settings.lookahead && feed) {
+    feed.close();
+    feed = null;
+  } else if (settings.lookahead && !feed && follow) {
+    feed = createFeed(lazyStream);
+    feed.follow(follow.video.currentSrc);
   }
   follow?.configure(settings);
   recorder?.event('settings', { settings });

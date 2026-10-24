@@ -7,6 +7,7 @@ test('nothing stored gives the defaults', () => {
   assert.equal(DEFAULTS.version, VERSION);
   assert.equal(DEFAULTS.enabled, false);
   assert.equal(DEFAULTS.playSpeed, 2.5);
+  assert.equal(DEFAULTS.lookahead, true);
 });
 
 test('defaults are inside their ranges', () => {
@@ -16,11 +17,12 @@ test('defaults are inside their ranges', () => {
 });
 
 test('valid values are kept, others replaced by the default', () => {
-  const s = migrate({ enabled: true, talkSpeed: 1.25, playSpeed: 'fast', waitSec: NaN, overlay: 1 });
+  const s = migrate({ enabled: true, talkSpeed: 1.25, playSpeed: 'fast', waitSec: NaN, lookahead: false, overlay: 1 });
   assert.equal(s.enabled, true);
   assert.equal(s.talkSpeed, 1.25);
   assert.equal(s.playSpeed, DEFAULTS.playSpeed);
   assert.equal(s.waitSec, DEFAULTS.waitSec);
+  assert.equal(s.lookahead, false);
   assert.equal(s.overlay, false);
 });
 
